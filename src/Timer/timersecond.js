@@ -22,7 +22,7 @@ export default class CountTimerSecond extends Component {
     
 
     comeSettingTimer(){
-        if (this.props.comeSetTimer===true){
+        if (this.props.comeSetTimer===1){
             this.setState({
                 timerStart: false,
                 timerReset: !this.state.timerReset,

@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, FlatList, StyleSheet, Text, View, Alert} from 'react-native';
+import { TouchableOpacity, FlatList, StyleSheet, Text, View, Alert } from 'react-native';
 import { Container, Header, Left, Body, Right, Button, Icon, Title } from 'native-base';
 import { SQLite } from 'expo-sqlite';
+import { ListItem } from 'react-native-elements';
 
 
 
-const DB = SQLite.openDatabase('db');
+const DB = SQLite.openDatabase('db.db');
 
 function insertList(title, content, millisecond, comeSetTimer) {
     console.log('insert Lists, title:' + title)
@@ -15,12 +16,12 @@ function insertList(title, content, millisecond, comeSetTimer) {
 
     DB.transaction(tx => {
         tx.executeSql(
-            'insert into lists (title, content, millisecond, comeSetTimer) values (?, ?, ?, ?)',
-            [ title, content, millisecond, comeSetTimer]
+            `insert into lists (id,title, content, millisecond, comeSetTimer) values (0,?, ?, ?, ?);`,
+            [title, content, millisecond, comeSetTimer]
         );
     },
         () => { console.log('fail') },
-        () => { console.log('success') },
+        () => { console.log('success')},
     );
 }
 
@@ -28,7 +29,6 @@ export default class DynamicListExample extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            lists:null,
             listUpdate: 0,//画面を再描画するためだけに使う
         };
         this.afterAddMemo = this.afterAddMemo.bind(this);
@@ -36,12 +36,14 @@ export default class DynamicListExample extends Component {
         this._handleAllDelete = this._handleAllDelete.bind(this);
     }
 
-    
+
 
     componentWillMount() {
         DB.transaction(tx => {
+            tx.executeSql('drop table lists;')
+
             tx.executeSql(
-                'create table if not exists lists (id INTEGER PRIMARY KEY AUTOINCREMENT, title text, content text, comeSetTimer integer, millisecond integer);'
+                'create table if not exists lists (id integer primary key autoincrement, title text,content text,millisecond integer, comeSetTimer integer);'
             ),
                 null,
                 DB.transaction(tx => {
@@ -49,12 +51,13 @@ export default class DynamicListExample extends Component {
                         'select * from lists',
                         null,
                         (_, { rows: { _array } }) => {
-                            console.log(_);
-                            console.log(_array);
-                            this.setState({ lists: _array });
-                        }
+                            this.setState({ lists: _array })
+                            console.log({ _array })
+                        },
+                        () => { console.log('fail2') },
                     )
-                })
+                }
+                )
         })
     }
 
@@ -70,11 +73,25 @@ export default class DynamicListExample extends Component {
         const millisecond = navigation.getParam('millisecond');
         const comeSetTimer = navigation.getParam('comeSetTimer') ? 1 : 0;
         this.setState({
-            lists:this.state.lists,
             listUpdate: this.state.listUpdate + 1 //lists更新のタイミングでこっちも更新
         });
-
+        console.log(title + ' ' + content + ' ' + millisecond + ' ' + comeSetTimer)
+        console.log(this.state.lists);
         insertList(title, content, millisecond, comeSetTimer);
+        DB.transaction(tx => {
+            tx.executeSql(
+                'select * from lists',
+                null,
+                (_, { rows: { _array } }) => {
+                    this.setState({ lists: _array })
+                    console.log({ _array })
+                },
+                () => { console.log('fail2') },
+            )
+        }
+        )
+        console.log(this.state.lists)
+
     }
 
     _handleDelete(id) {
@@ -99,7 +116,15 @@ export default class DynamicListExample extends Component {
             '全てのリストを削除します(Clear all lists)',
             [
                 { text: 'キャンセル(cancel)', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
-                { text: '実行(complete)', onPress: () => this.setState({ list: [] }), style: 'destructive' },
+                {
+                    text: '実行(complete)', onPress: () => {
+                        DB.transaction(
+                            tx.executeSql(
+                                'drop table lists;'
+                            )
+                        )
+                    }, style: 'destructive'
+                },
             ],
             { cancelable: false }
         );
@@ -125,16 +150,10 @@ export default class DynamicListExample extends Component {
                     </TouchableOpacity>
                 </View>
                 <View >
-                    <TouchableOpacity onPress={() =>
-                        DB.transaction(
-                            tx => {
-                                tx.executeSql(
-                                    'delete from lists;',
-                                );
-                            },
-                            null,
-                            console.log(this.state.lists)
-                        )}>
+                    <TouchableOpacity onPress={() => {
+                        this._handleAllDelete
+                        console.log(this.state.lists)
+                    }}>
                         <Text style={styles.item}>削除</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={this.afterAddMemo}>
@@ -142,21 +161,23 @@ export default class DynamicListExample extends Component {
                     </TouchableOpacity>
                     <FlatList
                         data={this.state.lists}
-                        extraData={this.state.listUpdate}
                         renderItem={({ item }) => {
-                            <View style={styles.body}>
-                                <TouchableOpacity 
-                                    onPress={() => this.props.navigation.navigate('ListDetail', { title: item.title, text: item.content, millisecond: item.millisecond, comeSetTimer: item.comeSetTimer })}>
-                                    <Text style={styles.textView}>{item.title}</Text>
-                                    <Text style={styles.textView}>{item.content}</Text>
-                                </TouchableOpacity>
-                            </View>
-                        }
-                    }
-                        keyExtractor={(item, index) => index.toString()}
+                            return (
+                                <ListItem
+                                    key={item.id.toString()}
+                                    title={item.title}
+                                    subtitle={item.content}
+                                    onPress={() => this.props.navigation.navigate('ListDetail', { title: item.title, text: item.content, millisecond: item.millisecond, comeSetTimer: item.comeSetTimer })}
+                                    onLongPress={() => {
+                                        this._handleDelete(item.id)
+                                        console.log(this.state.lists)
+                                    }}
+                                />
+                            )
+                        }}
+                        keyExtractor={item => item.id.toString()}
                     />
                 </View>
-        
             </Container>
 
         );
@@ -187,8 +208,8 @@ const styles = StyleSheet.create({
         flex: 1,
         borderBottomColor: 'black',
         borderWidth: 1,
-        paddingHorizontal:10,
-        paddingVertical:25,
+        paddingHorizontal: 10,
+        paddingVertical: 25,
     },
     footer: {
         padding: 10,
