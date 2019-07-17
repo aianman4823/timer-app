@@ -8,20 +8,25 @@ import { ListItem } from 'react-native-elements';
 
 const DB = SQLite.openDatabase('db.db');
 
-function insertList(title, content, millisecond, comeSetTimer) {
+function insertList(title, content, millisecond, comeSetTimer, listUpdate) {
     console.log('insert Lists, title:' + title)
     console.log('insert Lists, content:' + content)
     console.log('insert Lists, millisecond:' + millisecond)
     console.log('insert Lists, comeSetTimer:' + comeSetTimer)
+    console.log('insert Lists, listUpdate:' + listUpdate)
 
     DB.transaction(tx => {
         tx.executeSql(
-            `insert into lists (id,title, content, millisecond, comeSetTimer) values (0,?, ?, ?, ?);`,
-            [title, content, millisecond, comeSetTimer]
+            `insert into lists (title, content, millisecond, comeSetTimer,listUpdate) values (?, ?, ?, ?,?);`,
+            [title, content, millisecond, comeSetTimer, listUpdate]
+        );
+        tx.executeSql(
+            'select * from lists', [], (_, { rows }) =>
+                console.log(JSON.stringify(rows))
         );
     },
-        () => { console.log('fail') },
-        () => { console.log('success')},
+    console.log('fail'),
+
     );
 }
 
@@ -32,32 +37,17 @@ export default class DynamicListExample extends Component {
             listUpdate: 0,//画面を再描画するためだけに使う
         };
         this.afterAddMemo = this.afterAddMemo.bind(this);
-        this._handleDelete = this._handleDelete.bind(this);
         this._handleAllDelete = this._handleAllDelete.bind(this);
     }
 
 
 
-    componentWillMount() {
+    componentDidMount() {
         DB.transaction(tx => {
             tx.executeSql('drop table lists;')
-
             tx.executeSql(
-                'create table if not exists lists (id integer primary key autoincrement, title text,content text,millisecond integer, comeSetTimer integer);'
-            ),
-                null,
-                DB.transaction(tx => {
-                    tx.executeSql(
-                        'select * from lists',
-                        null,
-                        (_, { rows: { _array } }) => {
-                            this.setState({ lists: _array })
-                            console.log({ _array })
-                        },
-                        () => { console.log('fail2') },
-                    )
-                }
-                )
+                'create table if not exists lists (id integer primary key not null, title text,content text,millisecond integer, comeSetTimer integer,listUpdate integer);'
+            );
         })
     }
 
@@ -73,41 +63,30 @@ export default class DynamicListExample extends Component {
         const millisecond = navigation.getParam('millisecond');
         const comeSetTimer = navigation.getParam('comeSetTimer') ? 1 : 0;
         this.setState({
-            listUpdate: this.state.listUpdate + 1 //lists更新のタイミングでこっちも更新
+            listUpdate: ++this.state.listUpdate//lists更新のタイミングでこっちも更新
         });
-        console.log(title + ' ' + content + ' ' + millisecond + ' ' + comeSetTimer)
+        const listUpdate = this.state.listUpdate;
+        console.log(title + ' ' + content + ' ' + millisecond + ' ' + comeSetTimer + ' ' + listUpdate)
         console.log(this.state.lists);
-        insertList(title, content, millisecond, comeSetTimer);
+        insertList(title, content, millisecond, comeSetTimer, listUpdate);
         DB.transaction(tx => {
             tx.executeSql(
                 'select * from lists',
-                null,
+                [],
                 (_, { rows: { _array } }) => {
                     this.setState({ lists: _array })
                     console.log({ _array })
                 },
                 () => { console.log('fail2') },
-            )
+
+            );
         }
         )
         console.log(this.state.lists)
 
     }
 
-    _handleDelete(id) {
-        Alert.alert('長押ししてるね！！')
-        console.log(this.state.lists.length);
-        (id) =>
-            DB.transaction(
-                tx => {
-                    tx.executeSql(
-                        'delete from lists where id = ?;',
-                        [id]
-                    );
-                },
-                null,
-            )
-    }
+   
 
 
     _handleAllDelete() {
@@ -161,17 +140,43 @@ export default class DynamicListExample extends Component {
                     </TouchableOpacity>
                     <FlatList
                         data={this.state.lists}
+                        extraData={this.state.listUpdate}
                         renderItem={({ item }) => {
                             return (
                                 <ListItem
-                                    key={item.id.toString()}
+                                    key={item.id}
                                     title={item.title}
                                     subtitle={item.content}
                                     onPress={() => this.props.navigation.navigate('ListDetail', { title: item.title, text: item.content, millisecond: item.millisecond, comeSetTimer: item.comeSetTimer })}
                                     onLongPress={() => {
-                                        this._handleDelete(item.id)
-                                        console.log(this.state.lists)
-                                    }}
+                                                Alert.alert(
+                                                '削除',
+                                                'このリストを削除します(Clear this list)',
+                                                [
+                                                    { text: 'キャンセル(cancel)', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+                                                    {
+                                                        text: '実行(complete)', onPress: (id) => {
+                                                                    DB.transaction(
+                                                                        tx => {
+                                                                            tx.executeSql('delete from lists where id = ?;', [id]);
+                                                                        },
+                                                                        () => { console.log('fail1') },
+                                                                        DB.transaction(tx => {
+                                                                            tx.executeSql(
+                                                                                'select * from lists;',
+                                                                                console.log('fail2'),
+                                                                                (_, { rows: { _array } }) => this.setState({ lists: _array })
+                                                                            );
+                                                                            
+                                                                        })
+                                                                    )
+                                                        }, style: 'destructive'
+                                                    },
+                                                ],
+                                                { cancelable: false }
+                                            )
+                                    }
+                                    }
                                 />
                             )
                         }}

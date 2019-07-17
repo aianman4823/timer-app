@@ -84,8 +84,7 @@ export default class SettingTimerSecond extends React.Component {
         if (this.state.notcomeSetTimer === true) {
             console.log(this.state.millisecond)
             console.log('comeSetTimer:'+this.state.comeSetTimer)
-            console.log(this.state.title)
-            console.log(this.state.text)
+            
             this.handleSetTimer
             this.props.navigation.navigate('DynamicListExample', {
                 millisecond: this.state.millisecond,
@@ -96,6 +95,8 @@ export default class SettingTimerSecond extends React.Component {
             this.setState({
                 notcomeSetTimer: !this.state.notcomeSetTimer,
             })
+            console.log(this.state.title)
+            console.log(this.state.text)
         } else {
             console.log('中身がないよ')
             Alert.alert(
