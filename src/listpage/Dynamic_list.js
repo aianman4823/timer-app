@@ -25,8 +25,8 @@ function insertList(title, content, millisecond, comeSetTimer, listUpdate) {
                 console.log(JSON.stringify(rows))
         );
     },
-    console.log('fail'),
-
+        () => console.log('failだよ'),
+        () => console.log('successだよ')
     );
 }
 
@@ -38,6 +38,7 @@ export default class DynamicListExample extends Component {
         };
         this.afterAddMemo = this.afterAddMemo.bind(this);
         this._handleAllDelete = this._handleAllDelete.bind(this);
+        this._handleDelete=this._handleDelete.bind(this);
     }
 
 
@@ -67,7 +68,6 @@ export default class DynamicListExample extends Component {
         });
         const listUpdate = this.state.listUpdate;
         console.log(title + ' ' + content + ' ' + millisecond + ' ' + comeSetTimer + ' ' + listUpdate)
-        console.log(this.state.lists);
         insertList(title, content, millisecond, comeSetTimer, listUpdate);
         DB.transaction(tx => {
             tx.executeSql(
@@ -77,16 +77,39 @@ export default class DynamicListExample extends Component {
                     this.setState({ lists: _array })
                     console.log({ _array })
                 },
-                () => { console.log('fail2') },
-
-            );
-        }
+            );  
+        }, 
+        () => { console.log('fail2') },
+        () => { console.log('success2') }
         )
-        console.log(this.state.lists)
 
     }
 
-   
+
+    _handleDelete=( id = this.state.lists[0].id)=>{
+                DB.transaction(
+                    tx => {
+                      tx.executeSql(`delete from lists where id = ?;`, [id]);
+                      console.log(id)
+                      console.log('successDB')
+                    },
+                    null,
+                    DB.transaction(tx => {
+                        tx.executeSql(
+                            'select * from lists',
+                            [],
+                            (_, { rows: { _array } }) => {
+                                this.setState({ lists: _array })
+                                console.log({ _array })
+                            },
+                        );  
+                    }, 
+                    () => { console.log('fail2') },
+                    () => { console.log('success2') }
+                    )
+                )
+        }
+    
 
 
     _handleAllDelete() {
@@ -149,32 +172,19 @@ export default class DynamicListExample extends Component {
                                     subtitle={item.content}
                                     onPress={() => this.props.navigation.navigate('ListDetail', { title: item.title, text: item.content, millisecond: item.millisecond, comeSetTimer: item.comeSetTimer })}
                                     onLongPress={() => {
-                                                Alert.alert(
-                                                '削除',
-                                                'このリストを削除します(Clear this list)',
-                                                [
-                                                    { text: 'キャンセル(cancel)', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
-                                                    {
-                                                        text: '実行(complete)', onPress: (id) => {
-                                                                    DB.transaction(
-                                                                        tx => {
-                                                                            tx.executeSql('delete from lists where id = ?;', [id]);
-                                                                        },
-                                                                        () => { console.log('fail1') },
-                                                                        DB.transaction(tx => {
-                                                                            tx.executeSql(
-                                                                                'select * from lists;',
-                                                                                console.log('fail2'),
-                                                                                (_, { rows: { _array } }) => this.setState({ lists: _array })
-                                                                            );
-                                                                            
-                                                                        })
-                                                                    )
-                                                        }, style: 'destructive'
-                                                    },
-                                                ],
-                                                { cancelable: false }
-                                            )
+                                        Alert.alert(
+                                            '削除',
+                                            'このリストを削除します(Clear this list)',
+                                            [
+                                                { text: 'キャンセル(cancel)', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+                                                {
+                                                    text:'削除(complete)',
+                                                    onPress:this._handleDelete,
+                                                    style: 'destructive'
+                                                },
+                                            ],
+                                            { cancelable: false }
+                                        )
                                     }
                                     }
                                 />
