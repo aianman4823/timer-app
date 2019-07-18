@@ -38,9 +38,24 @@ export default class DynamicListExample extends Component {
         };
         this.afterAddMemo = this.afterAddMemo.bind(this);
         this._handleAllDelete = this._handleAllDelete.bind(this);
-        this._handleDelete=this._handleDelete.bind(this);
+        this._handleDelete = this._handleDelete.bind(this);
     }
 
+    componentWillMount() {
+        DB.transaction(tx => {
+            tx.executeSql(
+                'select * from lists',
+                [],
+                (_, { rows: { _array } }) => {
+                    this.setState({ lists: _array })
+                    console.log({ _array })
+                },
+            );
+        },
+            () => { console.log('fail2') },
+            () => { console.log('success2') }
+        )
+    }
 
 
     componentDidMount() {
@@ -77,60 +92,40 @@ export default class DynamicListExample extends Component {
                     this.setState({ lists: _array })
                     console.log({ _array })
                 },
-            );  
-        }, 
-        () => { console.log('fail2') },
-        () => { console.log('success2') }
+            );
+        },
+            () => { console.log('fail2') },
+            () => { console.log('success2') }
         )
 
     }
 
 
-    _handleDelete=( id = this.state.lists[0].id)=>{
-                DB.transaction(
-                    tx => {
-                      tx.executeSql(`delete from lists where id = ?;`, [id]);
-                      console.log(id)
-                      console.log('successDB')
+    _handleDelete = (id = this.state.lists[0].id) => {
+        DB.transaction(
+            tx => {
+                tx.executeSql(`delete from lists where id = ?;`, [id]);
+                console.log(id)
+                console.log('successDB')
+            },
+            null,
+            DB.transaction(tx => {
+                tx.executeSql(
+                    'select * from lists',
+                    [],
+                    (_, { rows: { _array } }) => {
+                        this.setState({ lists: _array })
+                        console.log({ _array })
                     },
-                    null,
-                    DB.transaction(tx => {
-                        tx.executeSql(
-                            'select * from lists',
-                            [],
-                            (_, { rows: { _array } }) => {
-                                this.setState({ lists: _array })
-                                console.log({ _array })
-                            },
-                        );  
-                    }, 
-                    () => { console.log('fail2') },
-                    () => { console.log('success2') }
-                    )
-                )
-        }
-    
-
-
-    _handleAllDelete() {
-        Alert.alert(
-            '全削除',
-            '全てのリストを削除します(Clear all lists)',
-            [
-                { text: 'キャンセル(cancel)', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
-                {
-                    text: '実行(complete)', onPress: () => {
-                        DB.transaction(
-                            tx.executeSql(
-                                'drop table lists;'
-                            )
-                        )
-                    }, style: 'destructive'
-                },
-            ],
-            { cancelable: false }
-        );
+                );
+            },
+                () => { console.log('fail2') },
+                () => { console.log('success2') }
+            )
+        )
     }
+
+
 
     render() {
         return (
@@ -152,12 +147,6 @@ export default class DynamicListExample extends Component {
                     </TouchableOpacity>
                 </View>
                 <View >
-                    <TouchableOpacity onPress={() => {
-                        this._handleAllDelete
-                        console.log(this.state.lists)
-                    }}>
-                        <Text style={styles.item}>削除</Text>
-                    </TouchableOpacity>
                     <TouchableOpacity onPress={this.afterAddMemo}>
                         <Text style={styles.item}>追加</Text>
                     </TouchableOpacity>
@@ -178,8 +167,8 @@ export default class DynamicListExample extends Component {
                                             [
                                                 { text: 'キャンセル(cancel)', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
                                                 {
-                                                    text:'削除(complete)',
-                                                    onPress:this._handleDelete,
+                                                    text: '削除(complete)',
+                                                    onPress: this._handleDelete,
                                                     style: 'destructive'
                                                 },
                                             ],
