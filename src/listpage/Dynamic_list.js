@@ -37,7 +37,6 @@ export default class DynamicListExample extends Component {
             listUpdate: 0,//画面を再描画するためだけに使う
         };
         this.afterAddMemo = this.afterAddMemo.bind(this);
-        this._handleAllDelete = this._handleAllDelete.bind(this);
         this._handleDelete = this._handleDelete.bind(this);
     }
 
