@@ -4,7 +4,10 @@ import { Container, Header, Left, Body, Right, Button, Icon, Title, Text } from 
 import { Picker, View, Alert } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import { SQLite } from 'expo-sqlite';
 
+
+const DB = SQLite.openDatabase('db.db');
 
 
 export default class SettingTimerSecond extends React.Component {
@@ -25,7 +28,18 @@ export default class SettingTimerSecond extends React.Component {
         this.handleComplete = this.handleComplete.bind(this);
         this.handleSetTimer = this.handleSetTimer.bind(this);
         this.handleCompleteToList = this.handleCompleteToList.bind(this);
-        this.handlenotcomeSetTimer=this.handlenotcomeSetTimer.bind(this);
+        this.handlenotcomeSetTimer = this.handlenotcomeSetTimer.bind(this);
+
+        this.add = this.add.bind(this);
+        
+    }
+
+    componentDidMount() {
+        DB.transaction(tx => {
+            tx.executeSql(
+                'create table if not exists lists (id integer primary key not null, title text,content text,millisecond integer, comeSetTimer integer,listUpdate integer);'
+            );
+        })
     }
 
     handleSetTimer() {
@@ -34,9 +48,9 @@ export default class SettingTimerSecond extends React.Component {
         });
     }
 
-    handlenotcomeSetTimer(){
+    handlenotcomeSetTimer() {
         this.setState({
-            notcomeSetTimer:false,
+            notcomeSetTimer: false,
         })
     }
 
@@ -52,9 +66,9 @@ export default class SettingTimerSecond extends React.Component {
             console.log('何回押してもダメよ！')
             Alert.alert(
                 '何回も設定を押さないで！',
-                onPress=this.handlenotcomeSetTimer()
+                onPress = this.handlenotcomeSetTimer()
             )
-            
+
         }
 
     }
@@ -83,24 +97,53 @@ export default class SettingTimerSecond extends React.Component {
     handleCompleteToList() {
         if (this.state.notcomeSetTimer === true) {
             console.log(this.state.millisecond)
-            console.log('comeSetTimer:'+this.state.comeSetTimer)
-            
+            console.log('comeSetTimer:' + this.state.comeSetTimer)
+
             this.handleSetTimer
-            this.props.navigation.navigate('DynamicListExample', {
-                millisecond: this.state.millisecond,
-                comeSetTimer: !this.state.comeSetTimer,
-                title: this.props.title,
-                text: this.props.text,
-            })
+            const title = this.props.title;
+            const text = this.props.text;
+            const millisecond = this.state.millisecond;
+            const comeSetTimer = !this.state.comeSetTimer?1:0;
+            
+            this.add(title,text,millisecond,comeSetTimer);
+            this.props.handleState()
+            console.log(this.props.handleState)
+            console.log('listsだよ'+JSON.stringify(this.state.lists))
             this.setState({
                 notcomeSetTimer: !this.state.notcomeSetTimer,
             })
-            console.log(this.state.title)
-            console.log(this.state.text)
         } else {
             console.log('中身がないよ')
             Alert.alert(
                 '設定を押してから完了を押してください');
+        }
+    }
+   
+
+    add(title, text, millisecond, comeSetTimer) {
+        //is millisecond empty?
+        if (millisecond === 0 || millisecond === '') {
+            return false;
+        }else{
+            DB.transaction(
+                tx => {
+                    tx.executeSql(
+                        'insert  into lists (title,content,millisecond,comeSetTimer) values (?,?,?,?)',
+                        [title, text, millisecond, comeSetTimer]
+                    );
+                    tx.executeSql('select * from lists', [],
+                    (_, { rows: { _array } }) => {
+                        this.setState({ lists: _array })
+                    }
+                    );
+                },
+                null,
+                ()=>{
+                    console.log('successやで'+ JSON.stringify(this.state.lists))
+                    
+                    this.props.navigation.navigate('DynamicListExample',{comeSetTimer:comeSetTimer,lists:JSON.stringify(this.state.lists)})
+                }
+            );
         }
     }
 
@@ -113,6 +156,8 @@ export default class SettingTimerSecond extends React.Component {
             millisecond: "",
         })
     }
+
+
 
     render() {
         // const items1 = [];

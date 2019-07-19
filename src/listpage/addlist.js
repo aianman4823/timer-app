@@ -4,6 +4,9 @@ import { Container, Header, Left, Body, Right, Button, Icon, Title } from 'nativ
 import SettingTimerSecond from '../screens/SettingTimerSecond';
 
 
+
+
+
 export default class UselessTextInput extends Component {
     constructor(props) {
         super(props);
@@ -57,7 +60,7 @@ export default class UselessTextInput extends Component {
                     />
                     
                     <View>
-                        <SettingTimerSecond text={this.state.text} title={this.state.title} navigation={this.props.navigation} />
+                        <SettingTimerSecond handleState={this.props.navigation.state.params.refresh} text={this.state.text} title={this.state.title} navigation={this.props.navigation} />
                     </View>
                 </View>
             </Container>

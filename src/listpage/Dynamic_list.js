@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, FlatList, StyleSheet, Text, View, Alert } from 'react-native';
+import { TouchableOpacity, FlatList, StyleSheet, Text, View, Alert,  AsyncStorage } from 'react-native';
 import { Container, Header, Left, Body, Right, Button, Icon, Title } from 'native-base';
 import { SQLite } from 'expo-sqlite';
 import { ListItem } from 'react-native-elements';
 
 
 
-const DB = SQLite.openDatabase('db.db');
+
+
+
 
 function insertList(title, content, millisecond, comeSetTimer, listUpdate) {
     console.log('insert Lists, title:' + title)
@@ -34,13 +36,18 @@ export default class DynamicListExample extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            lists:[],
             listUpdate: 0,//画面を再描画するためだけに使う
         };
-        this.afterAddMemo = this.afterAddMemo.bind(this);
         this._handleDelete = this._handleDelete.bind(this);
+        this.renderItem=this.renderItem.bind(this);
+        this.handleState=this.handleState.bind(this);
+        this.goToaddlist=this.goToaddlist.bind(this);
     }
 
+
     componentWillMount() {
+        DB = SQLite.openDatabase('db.db');
         DB.transaction(tx => {
             tx.executeSql(
                 'select * from lists',
@@ -52,22 +59,60 @@ export default class DynamicListExample extends Component {
             );
         },
             () => { console.log('fail2') },
-            () => { console.log('success2') }
+            () => {
+                console.log('successssssssss')
+                this.setState({
+                    listUpdate: ++this.state.listUpdate//lists更新のタイミングでこっちも更新
+                });
+            }
         )
     }
 
 
-    componentDidMount() {
-        DB.transaction(tx => {
-            tx.executeSql('drop table lists;')
-            tx.executeSql(
-                'create table if not exists lists (id integer primary key not null, title text,content text,millisecond integer, comeSetTimer integer,listUpdate integer);'
-            );
+    handleState(){
+        console.log('LIstの中身はなんじゃ'+this.props.navigation.getParam('lists'))
+        this.setState({
+            lists:this.props.navigation.getParam('lists')
         })
     }
 
-    componentWillUpdate() {
-        alert(JSON.stringify(this.state.lists));
+    componentDidMount() {
+        console.log('componentDidMount now!!')
+        DB.transaction(tx => {
+            tx.executeSql(
+                'create table if not exists lists (id integer primary key not null, title text,content text,millisecond integer, comeSetTimer integer);'
+            );
+        })
+        this.props.navigation.setParams({
+            goToaddlist:this.goToaddlist.bind(this),
+            handleState:this.handleState.bind(this)
+        })
+        DB.transaction(tx => {
+            tx.executeSql(
+                'select * from lists',
+                [],
+                (_, { rows: { _array } }) => {
+                    this.setState({ lists: _array })
+                    console.log({ _array })
+                },
+            );
+        },
+            () => { console.log('コンポーネントDidMountのなかfail2') },
+            () => { console.log('コンポーネントDidMountのなかsuccess2') }
+        )
+    }
+    goToaddlist(){
+        console.log()
+        this.props.navigation.navigate('UselessTextInput',{refresh:this.componentDidMount.bind(this)});
+    }
+
+    componentDidUpdate(){
+        console.log('componentDidUpdate now!')
+    }
+
+    shouldComponentUpdate(nextProps,nextState){
+        console.log('shouldcomponentUpdate now!')
+        return !(JSON.stringify(this.state)===JSON.stringify(nextState));
     }
 
 
@@ -99,8 +144,10 @@ export default class DynamicListExample extends Component {
 
     }
 
+    
 
-    _handleDelete = (id = this.state.lists[0].id) => {
+
+    _handleDelete(id) {
         DB.transaction(
             tx => {
                 tx.executeSql(`delete from lists where id = ?;`, [id]);
@@ -124,9 +171,51 @@ export default class DynamicListExample extends Component {
         )
     }
 
+   
+
+    renderItem() {
+        return (
+            <FlatList
+                data={this.state.lists}
+                extraData={this.state.listUpdate}
+                renderItem={({ item,i }) => {
+                    return (
+                        <ListItem
+                            key={i}
+                            title={item.title}
+                            subtitle={item.content}
+                            onPress={() => this.props.navigation.navigate('ListDetail', { title: item.title, text: item.content, millisecond: item.millisecond, comeSetTimer: item.comeSetTimer })}
+                            onLongPress={()=>{
+                                Alert.alert(
+                                    '削除',
+                                    'このリストを削除します(Clear this list)',
+                                    [
+                                        { text: 'キャンセル(cancel)', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+                                        {
+                                            text: '削除(complete)',
+                                            onPress: ()=>{
+                                                this._handleDelete(item.id)
+                                                console.log(JSON.stringify(item.id)+'iの中身は？？？')
+                                            },
+                                            style: 'destructive'
+                                        },
+                                    ],
+                                    { cancelable: false }
+                                )
+                            }
+                            }
+                        />
+                    )
+                }}
+                keyExtractor={item => item.id.toString()}
+            />
+        )
+    }
+    
 
 
     render() {
+        console.log('render now!');
         return (
             <Container>
                 <Header>
@@ -141,45 +230,12 @@ export default class DynamicListExample extends Component {
                     <Right />
                 </Header>
                 <View>
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('UselessTextInput')}>
+                    <TouchableOpacity onPress={()=>this.goToaddlist()}>
                         <Text style={styles.item}>リストに追加</Text>
                     </TouchableOpacity>
                 </View>
                 <View >
-                    <TouchableOpacity onPress={this.afterAddMemo}>
-                        <Text style={styles.item}>追加</Text>
-                    </TouchableOpacity>
-                    <FlatList
-                        data={this.state.lists}
-                        extraData={this.state.listUpdate}
-                        renderItem={({ item }) => {
-                            return (
-                                <ListItem
-                                    key={item.id}
-                                    title={item.title}
-                                    subtitle={item.content}
-                                    onPress={() => this.props.navigation.navigate('ListDetail', { title: item.title, text: item.content, millisecond: item.millisecond, comeSetTimer: item.comeSetTimer })}
-                                    onLongPress={() => {
-                                        Alert.alert(
-                                            '削除',
-                                            'このリストを削除します(Clear this list)',
-                                            [
-                                                { text: 'キャンセル(cancel)', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
-                                                {
-                                                    text: '削除(complete)',
-                                                    onPress: this._handleDelete,
-                                                    style: 'destructive'
-                                                },
-                                            ],
-                                            { cancelable: false }
-                                        )
-                                    }
-                                    }
-                                />
-                            )
-                        }}
-                        keyExtractor={item => item.id.toString()}
-                    />
+                    {this.renderItem()}
                 </View>
             </Container>
 
