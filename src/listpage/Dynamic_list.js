@@ -43,6 +43,7 @@ export default class DynamicListExample extends Component {
         this.renderItem=this.renderItem.bind(this);
         this.handleState=this.handleState.bind(this);
         this.goToaddlist=this.goToaddlist.bind(this);
+        this.componentDidMount=this.componentDidMount.bind(this);
     }
 
 
@@ -106,13 +107,17 @@ export default class DynamicListExample extends Component {
         this.props.navigation.navigate('UselessTextInput',{refresh:this.componentDidMount.bind(this)});
     }
 
-    componentDidUpdate(){
+    componentDidUpdate(prevState){
         console.log('componentDidUpdate now!')
+        const lists=this.state.lists;
+        if(lists!==prevState.lists){
+            console.log('update lists')
+        }
     }
 
-    shouldComponentUpdate(nextProps,nextState){
-        console.log('shouldcomponentUpdate now!')
-        return !(JSON.stringify(this.state)===JSON.stringify(nextState));
+    shouldComponentUpdate(){
+        console.log('shouldComponentUpdate now')
+        return true;
     }
 
 
@@ -166,7 +171,19 @@ export default class DynamicListExample extends Component {
                 );
             },
                 () => { console.log('fail2') },
-                () => { console.log('success2') }
+                () => { DB.transaction(tx => {
+                    tx.executeSql(
+                        'select * from lists',
+                        [],
+                        (_, { rows: { _array } }) => {
+                            this.setState({ lists: _array })
+                            console.log({ _array })
+                        },
+                    );
+                },
+                    () => { console.log('fail2') },
+                    () => { console.log('success2') }
+                ) }
             )
         )
     }
