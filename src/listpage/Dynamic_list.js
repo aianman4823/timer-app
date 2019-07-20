@@ -7,9 +7,6 @@ import { ListItem } from 'react-native-elements';
 
 
 
-
-
-
 function insertList(title, content, millisecond, comeSetTimer, listUpdate) {
     console.log('insert Lists, title:' + title)
     console.log('insert Lists, content:' + content)

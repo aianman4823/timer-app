@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AppRegistry, StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+import { AppRegistry, StyleSheet, Text, View, TouchableHighlight, Alert } from 'react-native';
 import { Stopwatch, Timer } from 'react-native-stopwatch-timer';
 
 
@@ -9,7 +9,7 @@ export default class CountTimer extends Component {
         this.state = {
             timerStart: false,
             stopwatchStart: false,
-            totalDuration: 60*1000,
+            totalDuration: this.props.millisecond === 0 ? 60 * 1000 : this.props.millisecond,
             timerReset: false,
             stopwatchReset: false,
         };
@@ -17,31 +17,24 @@ export default class CountTimer extends Component {
         this.resetTimer = this.resetTimer.bind(this);
         this.toggleStopwatch = this.toggleStopwatch.bind(this);
         this.resetStopwatch = this.resetStopwatch.bind(this);
-        this.comeSettingTimer=this.comeSettingTimer.bind(this);
     }
 
 
-    
 
-    comeSettingTimer(){
-        if (this.props.comeSetTimer===true){
-            this.setState({
-                timerStart: false,
-                timerReset: !this.state.timerReset,
-                totalDuration:this.props.millisecond  
-            })
-            console.log(this.state.totalDuration)
-        }else{
-            return(console.log(this.state.totalDuration));
-        }
-    }
+
+
 
     toggleTimer() {
         this.setState({ timerStart: !this.state.timerStart, timerReset: false });
     }
 
     resetTimer() {
-        this.setState({ timerStart: false, timerReset: true });
+        if (this.state.timerStart === true) {
+            Alert.alert('タイマーを止めてから押してください')
+        } else {
+            this.setState({ timerStart: false, timerReset: true });
+            this.props.handleCancel()
+        }
     }
 
     toggleStopwatch() {
@@ -59,32 +52,19 @@ export default class CountTimer extends Component {
     render() {
         return (
             <View>
-                <Text style={{fontSize:30,fontWeight:"bold"}}>ストップウォッチ</Text>
-                <Stopwatch laps msecs start={this.state.stopwatchStart}
-                    reset={this.state.stopwatchReset}
-                    options={options}
-                    getTime={this.getFormattedTime} />
-                <TouchableHighlight onPress={this.toggleStopwatch}>
-                    <Text style={{ fontSize: 30 }}>{!this.state.stopwatchStart ? "Start" : "Stop"}</Text>
-                </TouchableHighlight>
-                <TouchableHighlight onPress={this.resetStopwatch} style={{marginBottom:30}}>
-                    <Text style={{ fontSize: 30 }}>Reset</Text>
-                </TouchableHighlight>
-                
-                <Text style={{fontSize:30,fontWeight:"bold"}}>タイマー</Text>
+
+
+                <Text style={{ fontSize: 30, fontWeight: "bold" }}>タイマー</Text>
                 <Timer totalDuration={this.state.totalDuration} msecs start={this.state.timerStart}
                     reset={this.state.timerReset}
                     options={options}
                     handleFinish={handleTimerComplete}
                     getTime={this.getFormattedTime} />
                 <TouchableHighlight onPress={this.toggleTimer}>
-                    <Text style={{ fontSize: 30 }}>{!this.state.timerStart ? "Start" : "Stop"}</Text>
+                    <Text style={{ fontSize: 30 }}>{!this.state.timerStart ? "開始" : "停止"}</Text>
                 </TouchableHighlight>
                 <TouchableHighlight onPress={this.resetTimer}>
-                    <Text style={{ fontSize: 30 }}>Reset</Text>
-                </TouchableHighlight>
-                <TouchableHighlight onPress={this.comeSettingTimer}>
-                    <Text style={{ fontSize: 30 }}>Set Timer</Text>
+                    <Text style={{ fontSize: 30 }}>キャンセル</Text>
                 </TouchableHighlight>
             </View>
         );

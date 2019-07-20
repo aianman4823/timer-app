@@ -74,7 +74,7 @@ export default class SettingTimerSecond extends React.Component {
     }
 
     handleComplete() {
-        if (this.state.notcomeSetTimer === true) {
+        if (this.state.notcomeSetTimer === true && this.state.millisecond!==0) {
             console.log(this.state.millisecond)
             console.log(this.state.comeSetTimer)
             this.handleSetTimer
@@ -87,15 +87,17 @@ export default class SettingTimerSecond extends React.Component {
             this.setState({
                 notcomeSetTimer: !this.state.notcomeSetTimer,
             })
-        } else {
+        } else if(this.state.notcomeSetTimer===false){
             console.log('中身がないよ')
             Alert.alert(
                 '設定を押してから完了を押してください');
+        }else if (this.state.millisecond===0){
+            Alert.alert('タイマーに時間を入れてください')
         }
     }
 
     handleCompleteToList() {
-        if (this.state.notcomeSetTimer === true) {
+        if (this.state.notcomeSetTimer === true　&& this.state.millisecond!==0) {
             console.log(this.state.millisecond)
             console.log('comeSetTimer:' + this.state.comeSetTimer)
 
@@ -112,10 +114,12 @@ export default class SettingTimerSecond extends React.Component {
             this.setState({
                 notcomeSetTimer: !this.state.notcomeSetTimer,
             })
-        } else {
+        } else if(this.state.notcomeSetTimer===false) {
             console.log('中身がないよ')
             Alert.alert(
                 '設定を押してから完了を押してください');
+        }else if (this.state.millisecond===0){
+            Alert.alert('タイマーに時間を設定してください')
         }
     }
    

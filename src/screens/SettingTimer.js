@@ -26,48 +26,51 @@ export default class SettingTimer extends React.Component {
 
     handleSetTimer(){
         this.setState({
-            comeSetTimer:!this.state.comeSetTimer,
+            notcomeSetTimer:false,
         });
     }
     
     handlenotcomeSetTimer(){
         this.setState({
-            notcomeSetTimer:false,
+            notcomeSetTimer:true,
         })
     }
+
     
     handlePress(){
         if (this.state.notcomeSetTimer===false){
+            this.props.handleComeSetTimer()
             this.setState({
-                notcomeSetTimer:!this.state.notcomeSetTimer,
-                millisecond:this.state.hours*60*60*1000+this.state.minutes*60*1000+this.state.seconds*1000
-            });
-            console.log(this.state.millisecond);
+                millisecond: this.state.hours * 60 * 60 * 1000 + this.state.minutes * 60 * 1000 + this.state.seconds * 1000
+            })
+            this.handlenotcomeSetTimer
+            console.log('handlePress')
         }else{
             console.log(this.state.notcomeSetTimer)
             console.log('何回押してもダメよ！')
             Alert.alert(
                 '何回も設定を押さないで！',
-                onPress=this.handlenotcomeSetTimer()
+                onPress=this.handleSetTimer
             )
         }
         
     }
 
     handleComplete(){
-        if (this.state.notcomeSetTimer===true){
+        if (this.state.notcomeSetTimer===true && this.state.millisecond!==0){
         console.log(this.state.millisecond)
         console.log(this.state.comeSetTimer)
-        this.handleSetTimer
         this.props.navigation.navigate('Main',{millisecond:this.state.millisecond,
                                                 comeSetTimer:!this.state.comeSetTimer})
         this.setState({
             notcomeSetTimer:!this.state.notcomeSetTimer,
         })
-        }else{
+        }else if(this.state.notcomeSetTimer===false){
             console.log('中身がないよ')
             Alert.alert(
                 '設定を押してから完了を押してください');
+        }else if(this.state.millisecond===0){
+            Alert.alert('タイマーに０秒がセットされています。セットしてください。')
         }
     }
 
@@ -105,17 +108,6 @@ export default class SettingTimer extends React.Component {
 
         return (
             <Container>
-                <Header>
-                    <Left>
-                        <Button transparent onPress={() => this.props.navigation.goBack()}>
-                            <Icon name='arrow-back' />
-                        </Button>
-                    </Left>
-                    <Body>
-                        <Title>タイマーセット</Title>
-                    </Body>
-                    <Right />
-                </Header>
                 <View >
                     {/* <Picker
                         selectedValue={this.state.hours}
@@ -336,7 +328,7 @@ export default class SettingTimer extends React.Component {
                     <View style={{width:100,height:100,position:'relative'}}>
                         <View style={{position:'absolute',top:200,left:280}}>
                             <TouchableOpacity
-                            onPress={this.handlePress}>
+                            onPress={()=>this.handlePress()}>
                                 <Text style={{ fontSize: 35 }}>設定</Text>
                             </TouchableOpacity>
                         </View>
@@ -344,12 +336,6 @@ export default class SettingTimer extends React.Component {
                             <TouchableOpacity
                             onPress={this.handleReset}>
                                 <Text style={{ fontSize: 25 }}>リセット</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={{position:'absolute',top:250,left:150}}>
-                            <TouchableOpacity
-                            onPress={this.handleComplete}>
-                                <Text style={{ fontSize: 25 }}>完了</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

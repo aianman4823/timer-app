@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.19.0",
+    "cancellationtoken": "^2.0.1",
     "expo": "^33.0.0",
     "expo-sqlite": "^5.0.1",
     "expo-sqlite-orm": "^1.5.0",
@@ -18,6 +19,7 @@
     "react": "16.8.3",
     "react-dom": "^16.8.6",
     "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
+    "react-native-display": "^1.0.8",
     "react-native-element": "^1.2.1",
     "react-native-elements": "^1.1.0",
     "react-native-material-menu": "^0.6.3",
