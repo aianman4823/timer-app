@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Container, Header, Left, Body, Right, Button, Icon, Title } from 'native-base';
 
 import CountTimerSecond from '../Timer/timersecond';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 export default class ListDetail extends React.Component{
     constructor(props){
@@ -36,6 +37,19 @@ export default class ListDetail extends React.Component{
                     millisecond={navigation.getParam('millisecond')}
                     comeSetTimer={navigation.getParam('comeSetTimer')}
                     />
+                </View>
+                <View>
+                    <TouchableOpacity onPress={()=>this.props.navigation.navigate('EditTextInput',
+                    {   
+                        handleState:this.props.navigation.state.params.refresh,
+                        title:navigation.getParam('title'),
+                        text:navigation.getParam('text'),
+                        millisecond:navigation.getParam('millisecond'),
+                        comeSetTimer:navigation.getParam('comeSetTimer'),
+                        id:navigation.getParam('id'),
+                        })}>
+                        <Text style={{fontSize:30}}>編集</Text>
+                    </TouchableOpacity>
                 </View>
             </Container>
         )

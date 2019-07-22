@@ -1,9 +1,12 @@
 import React from 'react';
 import { Container, View, Header, Left, Body, Right, Button, Title, Text } from 'native-base';
-import { Picker, TouchableHighlight } from 'react-native';
+import { Picker, StyleSheet } from 'react-native';
 import Display from 'react-native-display';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Stopwatch, Timer } from 'react-native-stopwatch-timer';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+import StopwatchOnly from '../Timer/stopwatch';
 
 import SubMenu from '../menu/SubMenu';
 
@@ -99,22 +102,22 @@ export default class Main extends React.Component {
             <Container>
                 <Header>
                     <Left>
-                        <Title>メインページ</Title>
+                        <SubMenu navigate={navigate} />
                     </Left>
-                    <Body />
+                    <Body >
+                        <Title>シンプルタイマー</Title>
+                    </Body>
                     <Right>
                         <View>
-                            <SubMenu navigate={navigate} />
+                            <TouchableOpacity transparent onPress={() => navigate('DynamicListExample')}>
+                                <Icon
+                                    name='database' size={20} />
+                            </TouchableOpacity>
                         </View>
                     </Right>
                 </Header>
                 <View>
-                    <View>
-                        <Button small iconRight transparent primary onPress={() => navigate('DynamicListExample')}>
-                            <Text style={{ fontSize: 20 }}>作業リストページへ</Text>
-                        </Button>
-                    </View>
-                    <View>
+                    <View style={{ marginTop: 50, marginLeft: 35 }}>
                         <Display enable={!this.state.enable}>
                             <CountTimer millisecond={this.state.millisecond} handleCancel={() => this.handleCancel()} />
                         </Display>
@@ -337,32 +340,19 @@ export default class Main extends React.Component {
                                     </Picker>
                                 </View>
                             </View>
-                            <View style={{ width: 100, height: 100, position: 'relative' }}>
-                                <View style={{ position: 'absolute', top: 200, left: 280 }}>
-                                    <TouchableOpacity
+                            <View style={styles.buttonloc}>
+                                <View style={styles.button}>
+                                    <TouchableOpacity 
                                         onPress={() => this.handlePress()}>
-                                        <Text style={{ fontSize: 35 }}>設定</Text>
+                                        <Text style={{ fontSize: 30 }}>設定</Text>
                                     </TouchableOpacity>
                                 </View>
-                                <View style={{ position: 'absolute', top: 200, left: 150 }}>
+                                <View style={styles.button_reset}>
                                     <TouchableOpacity
                                         onPress={this.handleReset}>
                                         <Text style={{ fontSize: 25 }}>リセット</Text>
                                     </TouchableOpacity>
                                 </View>
-                            </View>
-                            <View style={{marginTop:150}}>
-                                <Text style={{ fontSize: 30, fontWeight: "bold" }}>ストップウォッチ</Text>
-                                <Stopwatch laps msecs start={this.state.stopwatchStart}
-                                    reset={this.state.stopwatchReset}
-                                    options={options}
-                                    getTime={this.getFormattedTime} />
-                                <TouchableHighlight onPress={this.toggleStopwatch}>
-                                    <Text style={{ fontSize: 30 }}>{!this.state.stopwatchStart ? "開始" : "停止"}</Text>
-                                </TouchableHighlight>
-                                <TouchableHighlight onPress={this.resetStopwatch} style={{ marginBottom: 30 }}>
-                                    <Text style={{ fontSize: 30 }}>キャンセル</Text>
-                                </TouchableHighlight>
                             </View>
                         </View>
                     </Display>
@@ -371,16 +361,22 @@ export default class Main extends React.Component {
         )
     }
 }
-const options = {
-    container: {
-        backgroundColor: '#000',
-        padding: 5,
-        borderRadius: 5,
-        width: 220,
+
+
+const styles = StyleSheet.create({
+    button_reset: {
+        position: 'absolute',
+        top: 200,
+        left: 100
     },
-    text: {
-        fontSize: 30,
-        color: '#FFF',
-        marginLeft: 7,
-    }
-};
+    button: {
+        position: 'absolute',
+        top: 200,
+        left: 250
+    },
+    buttonloc: {
+        width: 100,
+        height: 100,
+        position: 'relative'
+    },
+})

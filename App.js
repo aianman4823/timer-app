@@ -18,6 +18,7 @@ import ListDetail from './src/listdetail/listdetail';
 import SettingTimerSecond from './src/screens/SettingTimerSecond';
 import UselessTextInput from './src/listpage/addlist';
 import CountTimerSecond from './src/Timer/timersecond';
+import EditTextInput from './src/listdetail/editlist';
 
 
 const handleCustomTransition = ({ scenes }) => {
@@ -50,6 +51,7 @@ const Stack = createStackNavigator(
     SettingTimerSecond:{screen:SettingTimerSecond},
     UselessTextInput:{screen:UselessTextInput},
     CountTimerSecond:{screen:CountTimerSecond},
+    EditTextInput:{screen:EditTextInput},
   },
   {
     initialRouteName: 'Main',
@@ -60,6 +62,7 @@ const Stack = createStackNavigator(
     }
   }
 );
+
 
 const AppContainer = createAppContainer(Stack)
 

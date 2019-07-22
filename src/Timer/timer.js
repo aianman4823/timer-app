@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { AppRegistry, StyleSheet, Text, View, TouchableHighlight, Alert } from 'react-native';
 import { Stopwatch, Timer } from 'react-native-stopwatch-timer';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
 export default class CountTimer extends Component {
@@ -52,20 +53,23 @@ export default class CountTimer extends Component {
     render() {
         return (
             <View>
-
-
-                <Text style={{ fontSize: 30, fontWeight: "bold" }}>タイマー</Text>
                 <Timer totalDuration={this.state.totalDuration} msecs start={this.state.timerStart}
                     reset={this.state.timerReset}
                     options={options}
                     handleFinish={handleTimerComplete}
                     getTime={this.getFormattedTime} />
-                <TouchableHighlight onPress={this.toggleTimer}>
-                    <Text style={{ fontSize: 30 }}>{!this.state.timerStart ? "開始" : "停止"}</Text>
-                </TouchableHighlight>
-                <TouchableHighlight onPress={this.resetTimer}>
-                    <Text style={{ fontSize: 30 }}>キャンセル</Text>
-                </TouchableHighlight>
+                <View style={{position:'relative'}}>
+                    <View style={styles.buttonloc_start}>
+                        <TouchableOpacity style={styles.button} onPress={this.toggleTimer}>
+                            <Text style={styles.text_start}>{!this.state.timerStart ? "開始" : "停止"}</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.buttonloc}>
+                        <TouchableOpacity style={styles.button} onPress={this.resetTimer}>
+                            <Text style={styles.text}>キャンセル</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </View>
         );
     }
@@ -77,12 +81,45 @@ const options = {
     container: {
         backgroundColor: '#000',
         padding: 5,
-        borderRadius: 5,
-        width: 220,
+        borderRadius: 20,
+        width: 340,
+        height: 80,
     },
     text: {
-        fontSize: 30,
+        fontSize: 50,
         color: '#FFF',
-        marginLeft: 7,
+        marginLeft: 12,
+        marginTop: 5,
     }
 };
+
+const styles = StyleSheet.create({
+    button: {
+        backgroundColor: '#000',
+        borderRadius: 100,
+        width: 100,
+        height: 100,
+    },
+    text: {
+        marginTop: 45,
+        fontSize: 15,
+        color: '#fff',
+        textAlign: 'center',
+    },
+    text_start: {
+        marginTop: 40,
+        fontSize: 25,
+        color: '#fff',
+        textAlign: 'center',
+    },
+    buttonloc: {
+        position:'absolute',
+        top:30,
+        left:30
+    },
+    buttonloc_start: {
+        position:'absolute',
+        top:30,
+        left:200,
+    }
+})

@@ -26,6 +26,7 @@
     "react-native-navigation": "^2.22.3",
     "react-native-stopwatch-timer": "0.0.21",
     "react-native-swipeout": "^2.3.6",
+    "react-native-vector-icons": "^6.6.0",
     "react-native-web": "^0.11.4",
     "react-navigation": "^3.11.0",
     "react-navigation-transitions": "^1.0.11",

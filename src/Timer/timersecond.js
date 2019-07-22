@@ -8,31 +8,15 @@ export default class CountTimerSecond extends Component {
         super(props);
         this.state = {
             timerStart: false,
-            totalDuration: 60*1000,
+            totalDuration: this.props.millisecond ,
             timerReset: false,
-           
         };
         this.toggleTimer = this.toggleTimer.bind(this);
         this.resetTimer = this.resetTimer.bind(this);
-
-        this.comeSettingTimer=this.comeSettingTimer.bind(this);
     }
 
 
-    
 
-    comeSettingTimer(){
-        if (this.props.comeSetTimer===1){
-            this.setState({
-                timerStart: false,
-                timerReset: !this.state.timerReset,
-                totalDuration:this.props.millisecond  
-            })
-            console.log(this.state.totalDuration)
-        }else{
-            return(console.log(this.state.totalDuration));
-        }
-    }
 
     toggleTimer() {
         this.setState({ timerStart: !this.state.timerStart, timerReset: false });
@@ -63,9 +47,6 @@ export default class CountTimerSecond extends Component {
                 </TouchableHighlight>
                 <TouchableHighlight onPress={this.resetTimer}>
                     <Text style={{ fontSize: 30 }}>Reset</Text>
-                </TouchableHighlight>
-                <TouchableHighlight onPress={this.comeSettingTimer}>
-                    <Text style={{ fontSize: 30 }}>Set Timer</Text>
                 </TouchableHighlight>
             </View>
         );

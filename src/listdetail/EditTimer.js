@@ -10,7 +10,7 @@ import { SQLite } from 'expo-sqlite';
 const DB = SQLite.openDatabase('db.db');
 
 
-export default class SettingTimerSecond extends React.Component {
+export default class EditTimer extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -22,6 +22,7 @@ export default class SettingTimerSecond extends React.Component {
             notcomeSetTimer: false,
             title: this.props.title,
             text: this.props.text,
+            id:this.props.id,
         }
         this.handlePress = this.handlePress.bind(this);
         this.handleReset = this.handleReset.bind(this);
@@ -29,17 +30,10 @@ export default class SettingTimerSecond extends React.Component {
         this.handleCompleteToList = this.handleCompleteToList.bind(this);
         this.handlenotcomeSetTimer = this.handlenotcomeSetTimer.bind(this);
 
-        this.add = this.add.bind(this);
-        
+        this.updatelist = this.updatelist.bind(this);
+
     }
 
-    componentDidMount() {
-        DB.transaction(tx => {
-            tx.executeSql(
-                'create table if not exists lists (id integer primary key not null, title text,content text,millisecond integer, comeSetTimer integer,listUpdate integer);'
-            );
-        })
-    }
 
     handleSetTimer() {
         this.setState({
@@ -74,7 +68,7 @@ export default class SettingTimerSecond extends React.Component {
 
 
     handleCompleteToList() {
-        if (this.state.notcomeSetTimer === true　&& this.state.millisecond!==0) {
+        if (this.state.notcomeSetTimer === true && this.state.millisecond !== 0) {
             console.log(this.state.millisecond)
             console.log('comeSetTimer:' + this.state.comeSetTimer)
 
@@ -82,47 +76,48 @@ export default class SettingTimerSecond extends React.Component {
             const title = this.props.title;
             const text = this.props.text;
             const millisecond = this.state.millisecond;
-            const comeSetTimer = !this.state.comeSetTimer?1:0;
-            
-            this.add(title,text,millisecond,comeSetTimer);
+            const comeSetTimer = !this.state.comeSetTimer ? 1 : 0;
+            const id = this.state.id;
+            this.updatelist(title, text, millisecond, comeSetTimer,id);
             this.props.handleState()
             console.log(this.props.handleState)
-            console.log('listsだよ'+JSON.stringify(this.state.lists))
+
+            console.log('listsだよ' + JSON.stringify(this.state.lists))
             this.setState({
                 notcomeSetTimer: !this.state.notcomeSetTimer,
             })
-        } else if(this.state.notcomeSetTimer===false) {
+        } else if (this.state.notcomeSetTimer === false) {
             console.log('中身がないよ')
             Alert.alert(
                 '設定を押してから完了を押してください');
-        }else if (this.state.millisecond===0){
+        } else if (this.state.millisecond === 0) {
             Alert.alert('タイマーに時間を設定してください')
         }
     }
-   
 
-    add(title, text, millisecond, comeSetTimer) {
+
+    updatelist(title, text, millisecond, comeSetTimer,id) {
         //is millisecond empty?
         if (millisecond === 0 || millisecond === '') {
             return false;
-        }else{
+        } else {
             DB.transaction(
                 tx => {
                     tx.executeSql(
-                        'insert  into lists (title,content,millisecond,comeSetTimer) values (?,?,?,?)',
-                        [title, text, millisecond, comeSetTimer]
+                        'update lists set title=?,content=?,millisecond=?,comeSetTimer=? where id=?',
+                        [title, text, millisecond, comeSetTimer,id]
                     );
                     tx.executeSql('select * from lists', [],
-                    (_, { rows: { _array } }) => {
-                        this.setState({ lists: _array })
-                    }
+                        (_, { rows: { _array } }) => {
+                            this.setState({ lists: _array })
+                        }
                     );
                 },
                 null,
-                ()=>{
-                    console.log('successやで'+ JSON.stringify(this.state.lists))
-                    
-                    this.props.navigation.navigate('DynamicListExample',{comeSetTimer:comeSetTimer,lists:JSON.stringify(this.state.lists)})
+                () => {
+                    console.log('successやで' + JSON.stringify(this.state.lists))
+
+                    this.props.navigation.navigate('DynamicListExample', { comeSetTimer: comeSetTimer, lists: JSON.stringify(this.state.lists) })
                 }
             );
         }
@@ -397,10 +392,10 @@ export default class SettingTimerSecond extends React.Component {
                         </View>
                         <View style={{ position: 'absolute', top: 300, left: 250 }}>
                             <TouchableOpacity
-                                style={{width:100,height:100, backgroundColor:'rgba(25,222,22,1)',borderRadius:50}}
+                                style={{ width: 100, height: 100, backgroundColor: 'rgba(25,222,22,1)', borderRadius: 50 }}
                                 onPress={this.handleCompleteToList}
                                 navigation={this.props.navigation}>
-                                <Text style={{ fontSize: 30,marginTop:35,marginLeft:20 }}>追加</Text>
+                                <Text style={{ fontSize: 30, marginTop: 35, marginLeft: 20 }}>編集</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

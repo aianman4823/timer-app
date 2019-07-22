@@ -1,46 +1,23 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, FlatList, StyleSheet, Text, View, Alert,  AsyncStorage } from 'react-native';
+import { TouchableOpacity, FlatList, StyleSheet, Text, View, Alert, AsyncStorage, ScrollView } from 'react-native';
 import { Container, Header, Left, Body, Right, Button, Icon, Title } from 'native-base';
 import { SQLite } from 'expo-sqlite';
 import { ListItem } from 'react-native-elements';
+import IconSec from 'react-native-vector-icons/FontAwesome';
 
 
-
-
-function insertList(title, content, millisecond, comeSetTimer, listUpdate) {
-    console.log('insert Lists, title:' + title)
-    console.log('insert Lists, content:' + content)
-    console.log('insert Lists, millisecond:' + millisecond)
-    console.log('insert Lists, comeSetTimer:' + comeSetTimer)
-    console.log('insert Lists, listUpdate:' + listUpdate)
-
-    DB.transaction(tx => {
-        tx.executeSql(
-            `insert into lists (title, content, millisecond, comeSetTimer,listUpdate) values (?, ?, ?, ?,?);`,
-            [title, content, millisecond, comeSetTimer, listUpdate]
-        );
-        tx.executeSql(
-            'select * from lists', [], (_, { rows }) =>
-                console.log(JSON.stringify(rows))
-        );
-    },
-        () => console.log('failだよ'),
-        () => console.log('successだよ')
-    );
-}
 
 export default class DynamicListExample extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            lists:[],
-            listUpdate: 0,//画面を再描画するためだけに使う
+            lists: [],
         };
         this._handleDelete = this._handleDelete.bind(this);
-        this.renderItem=this.renderItem.bind(this);
-        this.handleState=this.handleState.bind(this);
-        this.goToaddlist=this.goToaddlist.bind(this);
-        this.componentDidMount=this.componentDidMount.bind(this);
+        this.renderItem = this.renderItem.bind(this);
+        this.handleState = this.handleState.bind(this);
+        this.goToaddlist = this.goToaddlist.bind(this);
+        this.componentDidMount = this.componentDidMount.bind(this);
     }
 
 
@@ -59,18 +36,15 @@ export default class DynamicListExample extends Component {
             () => { console.log('fail2') },
             () => {
                 console.log('successssssssss')
-                this.setState({
-                    listUpdate: ++this.state.listUpdate//lists更新のタイミングでこっちも更新
-                });
             }
         )
     }
 
 
-    handleState(){
-        console.log('LIstの中身はなんじゃ'+this.props.navigation.getParam('lists'))
+    handleState() {
+        console.log('LIstの中身はなんじゃ' + this.props.navigation.getParam('lists'))
         this.setState({
-            lists:this.props.navigation.getParam('lists')
+            lists: this.props.navigation.getParam('lists')
         })
     }
 
@@ -82,8 +56,8 @@ export default class DynamicListExample extends Component {
             );
         })
         this.props.navigation.setParams({
-            goToaddlist:this.goToaddlist.bind(this),
-            handleState:this.handleState.bind(this)
+            goToaddlist: this.goToaddlist.bind(this),
+            handleState: this.handleState.bind(this)
         })
         DB.transaction(tx => {
             tx.executeSql(
@@ -99,54 +73,25 @@ export default class DynamicListExample extends Component {
             () => { console.log('コンポーネントDidMountのなかsuccess2') }
         )
     }
-    goToaddlist(){
-        console.log()
-        this.props.navigation.navigate('UselessTextInput',{refresh:this.componentDidMount.bind(this)});
+    goToaddlist() {
+        this.props.navigation.navigate('UselessTextInput', { refresh: this.componentDidMount.bind(this) });
     }
 
-    componentDidUpdate(prevState){
+    
+
+    componentDidUpdate(prevState) {
         console.log('componentDidUpdate now!')
-        const lists=this.state.lists;
-        if(lists!==prevState.lists){
+        const lists = this.state.lists;
+        if (lists !== prevState.lists) {
             console.log('update lists')
         }
     }
 
-    shouldComponentUpdate(){
+    shouldComponentUpdate() {
         console.log('shouldComponentUpdate now')
         return true;
     }
 
-
-    afterAddMemo() {
-        const { navigation } = this.props;
-        const title = navigation.getParam('title');
-        const content = navigation.getParam('text');
-        const millisecond = navigation.getParam('millisecond');
-        const comeSetTimer = navigation.getParam('comeSetTimer') ? 1 : 0;
-        this.setState({
-            listUpdate: ++this.state.listUpdate//lists更新のタイミングでこっちも更新
-        });
-        const listUpdate = this.state.listUpdate;
-        console.log(title + ' ' + content + ' ' + millisecond + ' ' + comeSetTimer + ' ' + listUpdate)
-        insertList(title, content, millisecond, comeSetTimer, listUpdate);
-        DB.transaction(tx => {
-            tx.executeSql(
-                'select * from lists',
-                [],
-                (_, { rows: { _array } }) => {
-                    this.setState({ lists: _array })
-                    console.log({ _array })
-                },
-            );
-        },
-            () => { console.log('fail2') },
-            () => { console.log('success2') }
-        )
-
-    }
-
-    
 
 
     _handleDelete(id) {
@@ -168,38 +113,43 @@ export default class DynamicListExample extends Component {
                 );
             },
                 () => { console.log('fail2') },
-                () => { DB.transaction(tx => {
-                    tx.executeSql(
-                        'select * from lists',
-                        [],
-                        (_, { rows: { _array } }) => {
-                            this.setState({ lists: _array })
-                            console.log({ _array })
-                        },
-                    );
-                },
-                    () => { console.log('fail2') },
-                    () => { console.log('success2') }
-                ) }
+                () => {
+                    DB.transaction(tx => {
+                        tx.executeSql(
+                            'select * from lists',
+                            [],
+                            (_, { rows: { _array } }) => {
+                                this.setState({ lists: _array })
+                                console.log({ _array })
+                            },
+                        );
+                    },
+                        () => { console.log('fail2') },
+                        () => { console.log('success2') }
+                    )
+                }
             )
         )
     }
 
-   
+
 
     renderItem() {
         return (
-            <FlatList
+            <View>
+                <FlatList
                 data={this.state.lists}
-                extraData={this.state.listUpdate}
-                renderItem={({ item,i }) => {
+                inverted
+                renderItem={({ item, i }) => {
                     return (
                         <ListItem
                             key={i}
                             title={item.title}
                             subtitle={item.content}
-                            onPress={() => this.props.navigation.navigate('ListDetail', { title: item.title, text: item.content, millisecond: item.millisecond, comeSetTimer: item.comeSetTimer })}
-                            onLongPress={()=>{
+                            onPress={() => {
+                                this.props.navigation.navigate('ListDetail',{ refresh: this.componentDidMount.bind(this),title: item.title, text: item.content, millisecond: item.millisecond, comeSetTimer: item.comeSetTimer,id:item.id })
+                            }}
+                            onLongPress={() => {
                                 Alert.alert(
                                     '削除',
                                     'このリストを削除します(Clear this list)',
@@ -207,9 +157,9 @@ export default class DynamicListExample extends Component {
                                         { text: 'キャンセル(cancel)', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
                                         {
                                             text: '削除(complete)',
-                                            onPress: ()=>{
+                                            onPress: () => {
                                                 this._handleDelete(item.id)
-                                                console.log(JSON.stringify(item.id)+'iの中身は？？？')
+                                                console.log(JSON.stringify(item.id) + 'iの中身は？？？')
                                             },
                                             style: 'destructive'
                                         },
@@ -222,10 +172,11 @@ export default class DynamicListExample extends Component {
                     )
                 }}
                 keyExtractor={item => item.id.toString()}
-            />
+                />
+            </View>
         )
     }
-    
+
 
 
     render() {
@@ -241,15 +192,16 @@ export default class DynamicListExample extends Component {
                     <Body>
                         <Title>作業リスト</Title>
                     </Body>
-                    <Right />
+                    <Right>
+                        <TouchableOpacity onPress={() => this.goToaddlist()}>
+                            <IconSec name='plus' size={30} />
+                        </TouchableOpacity>
+                    </Right>
                 </Header>
-                <View>
-                    <TouchableOpacity onPress={()=>this.goToaddlist()}>
-                        <Text style={styles.item}>リストに追加</Text>
-                    </TouchableOpacity>
-                </View>
                 <View >
-                    {this.renderItem()}
+                    <ScrollView contentContainerStyle={styles.container_scroll}>
+                        {this.renderItem()}
+                    </ScrollView>
                 </View>
             </Container>
 
@@ -258,8 +210,8 @@ export default class DynamicListExample extends Component {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
+    container_scroll: {
+        flexGrow: 1,
     },
     sectionHeader: {
         paddingTop: 2,
