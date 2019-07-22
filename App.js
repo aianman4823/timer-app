@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Dimensions } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator, createDrawerNavigator, createAppContainer } from 'react-navigation';
 import { fromLeft, fromBottom } from 'react-navigation-transitions';
 
@@ -27,7 +27,7 @@ const handleCustomTransition = ({ scenes }) => {
 
   if (prevScene && prevScene.route.routeName === 'Main' && nextScene.route.routeName === 'Setting') {
     return fromBottom();
-  }else if (prevScene && prevScene.route.routeName === 'Main' && nextScene.route.routeName === 'SettingTimer'){
+  } else if (prevScene && prevScene.route.routeName === 'Main' && nextScene.route.routeName === 'SettingTimer') {
     return fromBottom();
   }
   return fromLeft();
@@ -46,12 +46,12 @@ const Stack = createStackNavigator(
     Setting: { screen: Setting },
     DesHelp: { screen: DesHelp },
     CountTimer: { screen: CountTimer },
-    DynamicListExample:{screen:DynamicListExample},
-    ListDetail:{screen:ListDetail},
-    SettingTimerSecond:{screen:SettingTimerSecond},
-    UselessTextInput:{screen:UselessTextInput},
-    CountTimerSecond:{screen:CountTimerSecond},
-    EditTextInput:{screen:EditTextInput},
+    DynamicListExample: { screen: DynamicListExample },
+    ListDetail: { screen: ListDetail },
+    SettingTimerSecond: { screen: SettingTimerSecond },
+    UselessTextInput: { screen: UselessTextInput },
+    CountTimerSecond: { screen: CountTimerSecond },
+    EditTextInput: { screen: EditTextInput },
   },
   {
     initialRouteName: 'Main',
@@ -67,9 +67,16 @@ const Stack = createStackNavigator(
 const AppContainer = createAppContainer(Stack)
 
 export default class App extends React.Component {
+  
   render() {
     return (
-      <AppContainer style={styles.container} />
+      <View
+        style={{
+          width: Dimensions.get('window').width,
+          height: Dimensions.get('window').height,
+        }}>
+        <AppContainer style={styles.container} />
+      </View>
     );
   }
 }

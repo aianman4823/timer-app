@@ -54,13 +54,13 @@ export default class SettingTimerSecond extends React.Component {
     }
 
     handlePress() {
-        if (this.state.notcomeSetTimer === false) {
+        if (this.state.notcomeSetTimer === false ) {
             this.setState({
                 notcomeSetTimer: !this.state.notcomeSetTimer,
                 millisecond: this.state.hours * 60 * 60 * 1000 + this.state.minutes * 60 * 1000 + this.state.seconds * 1000
             });
             console.log(this.state.millisecond);
-        } else {
+        } else  {
             console.log(this.state.notcomeSetTimer)
             console.log('何回押してもダメよ！')
             Alert.alert(
@@ -74,7 +74,7 @@ export default class SettingTimerSecond extends React.Component {
 
 
     handleCompleteToList() {
-        if (this.state.notcomeSetTimer === true　&& this.state.millisecond!==0) {
+        if (this.state.notcomeSetTimer === true　&& this.state.millisecond!==0 && (this.props.title!==null || this.props.text!==null)) {
             console.log(this.state.millisecond)
             console.log('comeSetTimer:' + this.state.comeSetTimer)
 
@@ -96,7 +96,10 @@ export default class SettingTimerSecond extends React.Component {
             Alert.alert(
                 '設定を押してから完了を押してください');
         }else if (this.state.millisecond===0){
-            Alert.alert('タイマーに時間を設定してください')
+            Alert.alert('入力項目を確認してください')
+            this.handlenotcomeSetTimer()
+        }else if (this.props.title===null || this.props.text===null){
+            Alert.alert('やる作業名を入力してね')
         }
     }
    
@@ -395,7 +398,7 @@ export default class SettingTimerSecond extends React.Component {
                                 <Text style={{ fontSize: 25 }}>リセット</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={{ position: 'absolute', top: 300, left: 250 }}>
+                        <View style={{ position: 'absolute', top: 300, left: 230 }}>
                             <TouchableOpacity
                                 style={{width:100,height:100, backgroundColor:'rgba(25,222,22,1)',borderRadius:50}}
                                 onPress={this.handleCompleteToList}

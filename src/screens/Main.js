@@ -25,7 +25,6 @@ export default class Main extends React.Component {
             comeSetTimer: false,
             enable: true,
             nontime: true,
-
             stopwatchStart: false,
             stopwatchReset: false,
         }
@@ -105,7 +104,7 @@ export default class Main extends React.Component {
                         <SubMenu navigate={navigate} />
                     </Left>
                     <Body >
-                        <Title>シンプルタイマー</Title>
+                        <Title>タイマー</Title>
                     </Body>
                     <Right>
                         <View>
@@ -123,41 +122,7 @@ export default class Main extends React.Component {
                         </Display>
                     </View>
                     <Display enable={this.state.enable}>
-                        <View >
-                            {/* <Picker
-                        selectedValue={this.state.hours}
-                        style={{ height: 50, width: 100 }}
-                        onValueChange={(itemValue, itemIndex) =>
-                            this.setState({ hours: Number(itemValue) })
-                        }>
-                        {i1}
-                    </Picker>
-                    <Picker
-                        selectedValue={this.state.minutes}
-                        style={{ height: 50, width: 100, marginLeft: 100 }}
-                        onValueChange={(itemValue, itemIndex) =>
-                            this.setState({ hours: Number(itemValue) })
-                        }>
-                        {i2}
-                    </Picker>
-                    <Picker
-                        selectedValue={this.state.language}
-                        style={{ height: 50, width: 100 ,marginLeft:200}}
-                        onValueChange={(itemValue, itemIndex) =>
-                            this.setState({ language: itemValue })
-                        }>
-                        <Picker.Item label="Java" value="java" />
-                        <Picker.Item label="JavaScript" value="js" />
-                    </Picker>
-                    <Picker>
-                        {n.map(i=>(
-                            <Picker.Item
-                            key={i}
-                            label={i.toString()}
-                            value={i}
-                            />
-                        ))}
-                    </Picker> */}
+                        <View>
                             <View style={{ flexDirection: 'row', position: 'relative' }}>
                                 <View>
                                     <Text style={{ position: 'absolute', left: 55, top: 50, fontSize: 30 }}>Hour</Text>
@@ -342,7 +307,7 @@ export default class Main extends React.Component {
                             </View>
                             <View style={styles.buttonloc}>
                                 <View style={styles.button}>
-                                    <TouchableOpacity 
+                                    <TouchableOpacity
                                         onPress={() => this.handlePress()}>
                                         <Text style={{ fontSize: 30 }}>設定</Text>
                                     </TouchableOpacity>

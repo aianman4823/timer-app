@@ -24,6 +24,7 @@
     "react-native-elements": "^1.1.0",
     "react-native-material-menu": "^0.6.3",
     "react-native-navigation": "^2.22.3",
+    "react-native-responsive-screen": "^1.2.2",
     "react-native-stopwatch-timer": "0.0.21",
     "react-native-swipeout": "^2.3.6",
     "react-native-vector-icons": "^6.6.0",

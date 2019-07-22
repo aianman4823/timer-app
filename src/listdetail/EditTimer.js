@@ -92,6 +92,7 @@ export default class EditTimer extends React.Component {
                 '設定を押してから完了を押してください');
         } else if (this.state.millisecond === 0) {
             Alert.alert('タイマーに時間を設定してください')
+            this.handlenotcomeSetTimer()
         }
     }
 

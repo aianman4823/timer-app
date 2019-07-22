@@ -143,6 +143,7 @@ export default class DynamicListExample extends Component {
                 renderItem={({ item, i }) => {
                     return (
                         <ListItem
+                            style={{borderBottomColor:'rgba(192,192,192,1)',borderBottomWidth:1}}
                             key={i}
                             title={item.title}
                             subtitle={item.content}

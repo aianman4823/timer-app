@@ -47,13 +47,13 @@ export default class UselessTextInput extends Component {
                 </Header>
                 <View>
                     <TextInput
-                        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                        style={{ height: 50, borderColor: 'gray', borderWidth: 1 ,fontSize:22}}
                         onChangeText={this._handleTitle}
                         placeholder="作業タイトル"
                         value={this.state.title}
                     />
                     <TextInput
-                        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                        style={{ height: 50, borderColor: 'gray', borderWidth: 1 ,fontSize:22}}
                         onChangeText={this._handleText}
                         placeholder="作業内容"
                         value={this.state.text}

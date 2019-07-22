@@ -30,16 +30,18 @@ export default class ListDetail extends React.Component{
                 </Header>
                 <View>
                     <Text style={styles.item}>{navigation.getParam('title')}</Text>
-                    <Text style={styles.item}>{navigation.getParam('text')}</Text>
+                    <Text style={styles.item2}>{navigation.getParam('text')}</Text>
                 </View>
-                <View>
+                <View style={{ marginTop:10,marginLeft: 35 }}>
                     <CountTimerSecond 
                     millisecond={navigation.getParam('millisecond')}
                     comeSetTimer={navigation.getParam('comeSetTimer')}
                     />
                 </View>
-                <View>
-                    <TouchableOpacity onPress={()=>this.props.navigation.navigate('EditTextInput',
+                <View style={{marginTop:200,marginLeft:235}}>
+                    <TouchableOpacity 
+                    style={{width:100,height:100, backgroundColor:'rgba(25,222,22,1)',borderRadius:50}}
+                    onPress={()=>this.props.navigation.navigate('EditTextInput',
                     {   
                         handleState:this.props.navigation.state.params.refresh,
                         title:navigation.getParam('title'),
@@ -48,7 +50,7 @@ export default class ListDetail extends React.Component{
                         comeSetTimer:navigation.getParam('comeSetTimer'),
                         id:navigation.getParam('id'),
                         })}>
-                        <Text style={{fontSize:30}}>編集</Text>
+                        <Text style={{fontSize:30,marginTop:35,marginLeft:22}}>編集</Text>
                     </TouchableOpacity>
                 </View>
             </Container>
@@ -70,8 +72,15 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(247,247,247,1.0)',
     },
     item: {
-        padding: 10,
+        padding: 5,
+        fontSize: 23,
+        height: 'auto',
+        marginLeft:20,
+    },
+    item2: {
+        padding: 5,
         fontSize: 18,
-        height: 44,
+        height: 'auto',
+        marginLeft:20,
     },
 })
