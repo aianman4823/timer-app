@@ -113,7 +113,7 @@ export default class Main extends React.Component {
                         <View>
                             <TouchableOpacity transparent onPress={() => navigate('DynamicListExample')}>
                                 <Icon
-                                    name='database' size={20} />
+                                    name='database' size={25} />
                             </TouchableOpacity>
                         </View>
                     </Right>
