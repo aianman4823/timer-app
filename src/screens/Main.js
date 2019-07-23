@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, View, Header, Left, Body, Right, Button, Title, Text } from 'native-base';
-import { Picker, StyleSheet } from 'react-native';
+import { Picker, StyleSheet,Dimensions } from 'react-native';
 import Display from 'react-native-display';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Stopwatch, Timer } from 'react-native-stopwatch-timer';
@@ -12,6 +12,9 @@ import SubMenu from '../menu/SubMenu';
 
 import CountTimer from '../Timer/timer';
 
+
+const width=Dimensions.get('window').width;
+const height= Dimensions.get('window').height;
 
 
 export default class Main extends React.Component {
@@ -116,7 +119,7 @@ export default class Main extends React.Component {
                     </Right>
                 </Header>
                 <View>
-                    <View style={{ marginTop: 50, marginLeft: 35 }}>
+                    <View style={{ marginTop: height*0.1, marginLeft: width*0.09 }}>
                         <Display enable={!this.state.enable}>
                             <CountTimer millisecond={this.state.millisecond} handleCancel={() => this.handleCancel()} />
                         </Display>
@@ -125,10 +128,10 @@ export default class Main extends React.Component {
                         <View>
                             <View style={{ flexDirection: 'row', position: 'relative' }}>
                                 <View>
-                                    <Text style={{ position: 'absolute', left: 55, top: 50, fontSize: 30 }}>Hour</Text>
+                                    <Text style={{ position: 'absolute', left: width*0.12, top: height*0.07, fontSize: 22 }}>Hour</Text>
                                     <Picker
                                         selectedValue={this.state.hours}
-                                        style={{ height: 50, width: 100, marginLeft: 35 }}
+                                        style={{ height: height*0.05, width: width*0.2, marginLeft: width*0.07 }}
                                         onValueChange={(itemValue, itemIndex) =>
                                             this.setState({ hours: itemValue })
                                         }>
@@ -162,12 +165,12 @@ export default class Main extends React.Component {
 
 
                                 <View>
-                                    <Text style={{ position: 'absolute', left: 12, top: 50, fontSize: 30 }}>Minutes</Text>
+                                    <Text style={{ position: 'absolute', left: width*0.12, top: height*0.07, fontSize: 22 }}>Minutes</Text>
                                     <Picker
-                                        selectedValue={this.state.minutes}
-                                        style={{ height: 50, width: 100, marginLeft: 20 }}
+                                        selectedValue={this.state.seconds}
+                                        style={{ height: height*0.05, width: width*0.2, marginLeft: width*0.13 }}
                                         onValueChange={(itemValue, itemIndex) =>
-                                            this.setState({ minutes: Number(itemValue) })
+                                            this.setState({ seconds: Number(itemValue) })
                                         }>
                                         <Picker.Item label='00' value={0} />
                                         <Picker.Item label='01' value={1} />
@@ -234,10 +237,10 @@ export default class Main extends React.Component {
                                 </View>
 
                                 <View>
-                                    <Text style={{ position: 'absolute', left: 20, top: 50, fontSize: 30 }}>Seconds</Text>
+                                    <Text style={{ position: 'absolute', left: width*0.12, top: height*0.07, fontSize: 22 }}>Seconds</Text>
                                     <Picker
                                         selectedValue={this.state.seconds}
-                                        style={{ height: 50, width: 100, marginLeft: 20 }}
+                                        style={{ height: height*0.05, width: width*0.2, marginLeft: width*0.13 }}
                                         onValueChange={(itemValue, itemIndex) =>
                                             this.setState({ seconds: Number(itemValue) })
                                         }>
@@ -331,17 +334,16 @@ export default class Main extends React.Component {
 const styles = StyleSheet.create({
     button_reset: {
         position: 'absolute',
-        top: 200,
-        left: 100
+        top: height*0.3,
+        left: width*0.2
     },
     button: {
         position: 'absolute',
-        top: 200,
-        left: 250
+        top: height*0.3,
+        left: width*0.6
     },
     buttonloc: {
-        width: 100,
-        height: 100,
+        width: width*0.7,
         position: 'relative'
     },
 })

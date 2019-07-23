@@ -1,7 +1,7 @@
 import React from 'react';
-import { Container, Header, Left, Body, Right, Button, Icon, Title, Text } from 'native-base';
+import { Container, Text } from 'native-base';
 
-import { Picker, View, Alert } from 'react-native';
+import { Picker, View, Alert, Dimensions,StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { SQLite } from 'expo-sqlite';
@@ -9,6 +9,9 @@ import { SQLite } from 'expo-sqlite';
 
 const DB = SQLite.openDatabase('db.db');
 
+
+const width = Dimensions.get('window').width;
+const height = Dimensions.get('window').height;
 
 export default class SettingTimerSecond extends React.Component {
     constructor(props) {
@@ -30,7 +33,7 @@ export default class SettingTimerSecond extends React.Component {
         this.handlenotcomeSetTimer = this.handlenotcomeSetTimer.bind(this);
 
         this.add = this.add.bind(this);
-        
+
     }
 
     componentDidMount() {
@@ -54,13 +57,13 @@ export default class SettingTimerSecond extends React.Component {
     }
 
     handlePress() {
-        if (this.state.notcomeSetTimer === false ) {
+        if (this.state.notcomeSetTimer === false) {
             this.setState({
                 notcomeSetTimer: !this.state.notcomeSetTimer,
                 millisecond: this.state.hours * 60 * 60 * 1000 + this.state.minutes * 60 * 1000 + this.state.seconds * 1000
             });
             console.log(this.state.millisecond);
-        } else  {
+        } else {
             console.log(this.state.notcomeSetTimer)
             console.log('何回押してもダメよ！')
             Alert.alert(
@@ -74,7 +77,7 @@ export default class SettingTimerSecond extends React.Component {
 
 
     handleCompleteToList() {
-        if (this.state.notcomeSetTimer === true　&& this.state.millisecond!==0 && (this.props.title!==null || this.props.text!==null)) {
+        if (this.state.notcomeSetTimer === true && this.state.millisecond !== 0 && (this.props.title !== null || this.props.text !== null)) {
             console.log(this.state.millisecond)
             console.log('comeSetTimer:' + this.state.comeSetTimer)
 
@@ -82,33 +85,33 @@ export default class SettingTimerSecond extends React.Component {
             const title = this.props.title;
             const text = this.props.text;
             const millisecond = this.state.millisecond;
-            const comeSetTimer = !this.state.comeSetTimer?1:0;
-            
-            this.add(title,text,millisecond,comeSetTimer);
+            const comeSetTimer = !this.state.comeSetTimer ? 1 : 0;
+
+            this.add(title, text, millisecond, comeSetTimer);
             this.props.handleState()
             console.log(this.props.handleState)
-            console.log('listsだよ'+JSON.stringify(this.state.lists))
+            console.log('listsだよ' + JSON.stringify(this.state.lists))
             this.setState({
                 notcomeSetTimer: !this.state.notcomeSetTimer,
             })
-        } else if(this.state.notcomeSetTimer===false) {
+        } else if (this.state.notcomeSetTimer === false) {
             console.log('中身がないよ')
             Alert.alert(
                 '設定を押してから完了を押してください');
-        }else if (this.state.millisecond===0){
+        } else if (this.state.millisecond === 0) {
             Alert.alert('入力項目を確認してください')
             this.handlenotcomeSetTimer()
-        }else if (this.props.title===null || this.props.text===null){
+        } else if (this.props.title === null || this.props.text === null) {
             Alert.alert('やる作業名を入力してね')
         }
     }
-   
+
 
     add(title, text, millisecond, comeSetTimer) {
         //is millisecond empty?
         if (millisecond === 0 || millisecond === '') {
             return false;
-        }else{
+        } else {
             DB.transaction(
                 tx => {
                     tx.executeSql(
@@ -116,16 +119,16 @@ export default class SettingTimerSecond extends React.Component {
                         [title, text, millisecond, comeSetTimer]
                     );
                     tx.executeSql('select * from lists', [],
-                    (_, { rows: { _array } }) => {
-                        this.setState({ lists: _array })
-                    }
+                        (_, { rows: { _array } }) => {
+                            this.setState({ lists: _array })
+                        }
                     );
                 },
                 null,
-                ()=>{
-                    console.log('successやで'+ JSON.stringify(this.state.lists))
-                    
-                    this.props.navigation.navigate('DynamicListExample',{comeSetTimer:comeSetTimer,lists:JSON.stringify(this.state.lists)})
+                () => {
+                    console.log('successやで' + JSON.stringify(this.state.lists))
+
+                    this.props.navigation.navigate('DynamicListExample', { comeSetTimer: comeSetTimer, lists: JSON.stringify(this.state.lists) })
                 }
             );
         }
@@ -205,10 +208,10 @@ export default class SettingTimerSecond extends React.Component {
                     </Picker> */}
                     <View style={{ flexDirection: 'row', position: 'relative' }}>
                         <View>
-                            <Text style={{ position: 'absolute', left: 55, top: 50, fontSize: 30 }}>Hour</Text>
+                            <Text style={{ position: 'absolute', left: width * 0.12, top: height * 0.07, fontSize: 22 }}>Hour</Text>
                             <Picker
                                 selectedValue={this.state.hours}
-                                style={{ height: 50, width: 100, marginLeft: 35 }}
+                                style={{ height: height * 0.05, width: width * 0.2, marginLeft: width * 0.07 }}
                                 onValueChange={(itemValue, itemIndex) =>
                                     this.setState({ hours: itemValue })
                                 }>
@@ -242,10 +245,10 @@ export default class SettingTimerSecond extends React.Component {
 
 
                         <View>
-                            <Text style={{ position: 'absolute', left: 12, top: 50, fontSize: 30 }}>Minutes</Text>
+                            <Text style={{ position: 'absolute', left: width * 0.12, top: height * 0.07, fontSize: 22 }}>Minutes</Text>
                             <Picker
                                 selectedValue={this.state.minutes}
-                                style={{ height: 50, width: 100, marginLeft: 20 }}
+                                style={{ height: height * 0.05, width: width * 0.2, marginLeft: width * 0.13 }}
                                 onValueChange={(itemValue, itemIndex) =>
                                     this.setState({ minutes: Number(itemValue) })
                                 }>
@@ -314,10 +317,10 @@ export default class SettingTimerSecond extends React.Component {
                         </View>
 
                         <View>
-                            <Text style={{ position: 'absolute', left: 20, top: 50, fontSize: 30 }}>Seconds</Text>
+                            <Text style={{ position: 'absolute', left: width * 0.12, top: height * 0.07, fontSize: 22 }}>Seconds</Text>
                             <Picker
                                 selectedValue={this.state.seconds}
-                                style={{ height: 50, width: 100, marginLeft: 20 }}
+                                style={{ height: height * 0.05, width: width * 0.2, marginLeft: width * 0.13 }}
                                 onValueChange={(itemValue, itemIndex) =>
                                     this.setState({ seconds: Number(itemValue) })
                                 }>
@@ -385,25 +388,25 @@ export default class SettingTimerSecond extends React.Component {
                             </Picker>
                         </View>
                     </View>
-                    <View style={{ width: 100, height: 100, position: 'relative' }}>
-                        <View style={{ position: 'absolute', top: 230, left: 250 }}>
+                    <View style={styles.buttonloc}>
+                        <View style={styles.button}>
                             <TouchableOpacity
-                                onPress={this.handlePress}>
+                                onPress={() => this.handlePress()}>
                                 <Text style={{ fontSize: 30 }}>設定</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={{ position: 'absolute', top: 235, left: 100 }}>
+                        <View style={styles.button_reset}>
                             <TouchableOpacity
                                 onPress={this.handleReset}>
                                 <Text style={{ fontSize: 25 }}>リセット</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={{ position: 'absolute', top: 300, left: 230 }}>
+                        <View style={{ position: 'absolute', top: height*0.43, left: width*0.54 }}>
                             <TouchableOpacity
-                                style={{width:100,height:100, backgroundColor:'rgba(25,222,22,1)',borderRadius:50}}
+                                style={{ width: width*0.23, height: width*0.23, backgroundColor: 'rgba(25,222,22,1)', borderRadius: width*0.23 }}
                                 onPress={this.handleCompleteToList}
                                 navigation={this.props.navigation}>
-                                <Text style={{ fontSize: 30,marginTop:35,marginLeft:20 }}>追加</Text>
+                                <Text style={{ fontSize: width*0.08, marginTop: width*0.075, marginLeft: width*0.04 }}>追加</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -412,3 +415,21 @@ export default class SettingTimerSecond extends React.Component {
         );
     }
 }
+
+const styles = StyleSheet.create({
+    button_reset: {
+        position: 'absolute',
+        top: height * 0.36,
+        left: width * 0.2
+    },
+    button: {
+        position: 'absolute',
+        top: height * 0.36,
+        left: width * 0.6
+    },
+    buttonloc: {
+        width: width * 0.7,
+        
+        position: 'relative'
+    },
+})

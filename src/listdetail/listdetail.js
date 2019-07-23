@@ -1,9 +1,15 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View,Dimensions } from 'react-native';
 import { Container, Header, Left, Body, Right, Button, Icon, Title } from 'native-base';
 
 import CountTimerSecond from '../Timer/timersecond';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+
+
+
+const width=Dimensions.get('window').width;
+const height= Dimensions.get('window').height;
+
 
 export default class ListDetail extends React.Component{
     constructor(props){
@@ -38,9 +44,9 @@ export default class ListDetail extends React.Component{
                     comeSetTimer={navigation.getParam('comeSetTimer')}
                     />
                 </View>
-                <View style={{marginTop:200,marginLeft:235}}>
+                <View style={{marginTop:height*0.25,marginLeft:width*0.54}}>
                     <TouchableOpacity 
-                    style={{width:100,height:100, backgroundColor:'rgba(25,222,22,1)',borderRadius:50}}
+                    style={{width: width*0.23, height: width*0.23, backgroundColor: 'rgba(25,222,22,1)', borderRadius: width*0.23}}
                     onPress={()=>this.props.navigation.navigate('EditTextInput',
                     {   
                         handleState:this.props.navigation.state.params.refresh,
@@ -50,7 +56,7 @@ export default class ListDetail extends React.Component{
                         comeSetTimer:navigation.getParam('comeSetTimer'),
                         id:navigation.getParam('id'),
                         })}>
-                        <Text style={{fontSize:30,marginTop:35,marginLeft:22}}>編集</Text>
+                        <Text style={{fontSize: width*0.08, marginTop: width*0.075, marginLeft: width*0.04}}>編集</Text>
                     </TouchableOpacity>
                 </View>
             </Container>

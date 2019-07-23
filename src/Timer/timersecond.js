@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
-import { AppRegistry, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { AppRegistry, StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native';
 import {  Timer } from 'react-native-stopwatch-timer';
 
+
+
+const width=Dimensions.get('window').width;
+const height= Dimensions.get('window').height;
 
 export default class CountTimerSecond extends Component {
     constructor(props) {
@@ -65,44 +69,44 @@ const options = {
         backgroundColor: '#000',
         padding: 5,
         borderRadius: 20,
-        width: 340,
-        height: 80,
+        width: width*0.8,
+        height: height*0.13,
     },
     text: {
-        fontSize: 50,
+        fontSize: width*0.12,
         color: '#FFF',
-        marginLeft: 12,
-        marginTop: 5,
+        marginLeft: width*0.03,
+        marginTop: height*0.015,
     }
 };
 
 const styles = StyleSheet.create({
     button: {
         backgroundColor: '#000',
-        borderRadius: 100,
-        width: 100,
-        height: 100,
+        borderRadius: width*0.25,
+        width: width*0.25,
+        height: width*0.25,
     },
     text: {
-        marginTop: 45,
+        marginTop: height*0.06,
         fontSize: 15,
         color: '#fff',
         textAlign: 'center',
     },
     text_start: {
-        marginTop: 40,
+        marginTop: height*0.053,
         fontSize: 25,
         color: '#fff',
         textAlign: 'center',
     },
     buttonloc: {
         position:'absolute',
-        top:30,
-        left:30
+        top:height*0.05,
+        left:width*0.08
     },
     buttonloc_start: {
         position:'absolute',
-        top:30,
-        left:200,
+        top:height*0.05,
+        left:width*0.45,
     }
 })

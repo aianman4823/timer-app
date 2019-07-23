@@ -1,7 +1,7 @@
 import React from 'react';
-import { Container, Header, Left, Body, Right, Button, Icon, Title, Text } from 'native-base';
+import { Container,  Text } from 'native-base';
 
-import { Picker, View, Alert } from 'react-native';
+import { Picker, View, Alert, StyleSheet,Dimensions } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { SQLite } from 'expo-sqlite';
@@ -9,6 +9,8 @@ import { SQLite } from 'expo-sqlite';
 
 const DB = SQLite.openDatabase('db.db');
 
+const width=Dimensions.get('window').width;
+const height= Dimensions.get('window').height;
 
 export default class EditTimer extends React.Component {
     constructor(props) {
@@ -198,10 +200,10 @@ export default class EditTimer extends React.Component {
                     </Picker> */}
                     <View style={{ flexDirection: 'row', position: 'relative' }}>
                         <View>
-                            <Text style={{ position: 'absolute', left: 55, top: 50, fontSize: 30 }}>Hour</Text>
+                            <Text style={{ position: 'absolute', left: width * 0.12, top: height * 0.07, fontSize: 22 }}>Hour</Text>
                             <Picker
                                 selectedValue={this.state.hours}
-                                style={{ height: 50, width: 100, marginLeft: 35 }}
+                                style={{ height: height * 0.05, width: width * 0.2, marginLeft: width * 0.07 }}
                                 onValueChange={(itemValue, itemIndex) =>
                                     this.setState({ hours: itemValue })
                                 }>
@@ -235,10 +237,10 @@ export default class EditTimer extends React.Component {
 
 
                         <View>
-                            <Text style={{ position: 'absolute', left: 12, top: 50, fontSize: 30 }}>Minutes</Text>
+                            <Text style={{ position: 'absolute', left: width * 0.12, top: height * 0.07, fontSize: 22 }}>Minutes</Text>
                             <Picker
                                 selectedValue={this.state.minutes}
-                                style={{ height: 50, width: 100, marginLeft: 20 }}
+                                style={{ height: height * 0.05, width: width * 0.2, marginLeft: width * 0.13 }}
                                 onValueChange={(itemValue, itemIndex) =>
                                     this.setState({ minutes: Number(itemValue) })
                                 }>
@@ -307,10 +309,10 @@ export default class EditTimer extends React.Component {
                         </View>
 
                         <View>
-                            <Text style={{ position: 'absolute', left: 20, top: 50, fontSize: 30 }}>Seconds</Text>
+                            <Text style={{ position: 'absolute', left: width * 0.12, top: height * 0.07, fontSize: 22 }}>Seconds</Text>
                             <Picker
                                 selectedValue={this.state.seconds}
-                                style={{ height: 50, width: 100, marginLeft: 20 }}
+                                style={{ height: height * 0.05, width: width * 0.2, marginLeft: width * 0.13 }}
                                 onValueChange={(itemValue, itemIndex) =>
                                     this.setState({ seconds: Number(itemValue) })
                                 }>
@@ -378,25 +380,25 @@ export default class EditTimer extends React.Component {
                             </Picker>
                         </View>
                     </View>
-                    <View style={{ width: 100, height: 100, position: 'relative' }}>
-                        <View style={{ position: 'absolute', top: 230, left: 250 }}>
+                    <View style={ styles.buttonloc }>
+                        <View style={styles.button}>
                             <TouchableOpacity
                                 onPress={this.handlePress}>
                                 <Text style={{ fontSize: 30 }}>設定</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={{ position: 'absolute', top: 235, left: 100 }}>
+                        <View style={styles.button_reset}>
                             <TouchableOpacity
                                 onPress={this.handleReset}>
                                 <Text style={{ fontSize: 25 }}>リセット</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={{ position: 'absolute', top: 300, left: 250 }}>
+                        <View style={{ position: 'absolute', top: height*0.43, left: width*0.55 }}>
                             <TouchableOpacity
-                                style={{ width: 100, height: 100, backgroundColor: 'rgba(25,222,22,1)', borderRadius: 50 }}
+                                style={{ width: width*0.23, height: width*0.23, backgroundColor: 'rgba(25,222,22,1)', borderRadius: width*0.23 }}
                                 onPress={this.handleCompleteToList}
                                 navigation={this.props.navigation}>
-                                <Text style={{ fontSize: 30, marginTop: 35, marginLeft: 20 }}>編集</Text>
+                                <Text style={{ fontSize: width*0.08, marginTop: width*0.075, marginLeft: width*0.04 }}>完了</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -405,3 +407,21 @@ export default class EditTimer extends React.Component {
         );
     }
 }
+
+const styles = StyleSheet.create({
+    button_reset: {
+        position: 'absolute',
+        top: height * 0.36,
+        left: width * 0.2
+    },
+    button: {
+        position: 'absolute',
+        top: height * 0.36,
+        left: width * 0.6
+    },
+    buttonloc: {
+        width: width * 0.7,
+        
+        position: 'relative'
+    },
+})
