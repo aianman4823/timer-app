@@ -1,7 +1,8 @@
-import React from 'react';
-import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import React,{Component} from 'react';
+import { StyleSheet} from 'react-native';
 import { createStackNavigator, createBottomTabNavigator, createDrawerNavigator, createAppContainer } from 'react-navigation';
 import { fromLeft, fromBottom } from 'react-navigation-transitions';
+import { Container } from 'native-base';
 
 import Main from './src/screens/Main';
 import SettingTimer from './src/screens/SettingTimer';
@@ -66,17 +67,20 @@ const Stack = createStackNavigator(
 
 const AppContainer = createAppContainer(Stack)
 
-export default class App extends React.Component {
+export default class App extends Component {
+  constructor() {
+    super();
+    
+  }
   
+
   render() {
+    
+
     return (
-      <View
-        style={{
-          width: Dimensions.get('window').width,
-          height: Dimensions.get('window').height,
-        }}>
-        <AppContainer style={styles.container} />
-      </View>
+      <Container>
+        <AppContainer style={styles.container}/>
+      </Container>
     );
   }
 }

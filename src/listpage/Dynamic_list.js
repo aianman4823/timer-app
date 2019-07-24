@@ -3,7 +3,7 @@ import { TouchableOpacity, FlatList, StyleSheet, Text, View, Alert, AsyncStorage
 import { Container, Header, Left, Body, Right, Button, Icon, Title } from 'native-base';
 import { SQLite } from 'expo-sqlite';
 import { ListItem } from 'react-native-elements';
-import IconSec from 'react-native-vector-icons/FontAwesome';
+import { Ionicons } from '@expo/vector-icons';
 
 
 
@@ -195,7 +195,7 @@ export default class DynamicListExample extends Component {
                     </Body>
                     <Right>
                         <TouchableOpacity onPress={() => this.goToaddlist()}>
-                            <IconSec name='plus' size={30} />
+                            <Ionicons name="md-add" size={32} color="black" />
                         </TouchableOpacity>
                     </Right>
                 </Header>

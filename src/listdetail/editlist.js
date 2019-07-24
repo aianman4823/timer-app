@@ -40,7 +40,7 @@ export default class EditTextInput extends Component {
                         </Button>
                     </Left>
                     <Body>
-                        <Title>作業リスト追加</Title>
+                        <Title>作業リスト編集</Title>
                     </Body>
                     <Right />
                 </Header>
@@ -58,7 +58,7 @@ export default class EditTextInput extends Component {
                         value={this.state.text}
                     />
 
-                    <View>
+                    <View style={{height:40}}>
                         <EditTimer handleState={this.props.navigation.getParam('handleState')} id={this.state.id} text={this.state.text} title={this.state.title} navigation={this.props.navigation} />
                     </View>
                 </View>
@@ -82,10 +82,5 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: 'bold',
         backgroundColor: 'rgba(247,247,247,1.0)',
-    },
-    item: {
-        padding: 10,
-        fontSize: 18,
-        height: 44,
     },
 })
