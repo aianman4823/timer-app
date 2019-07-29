@@ -16,9 +16,9 @@ export default class EditTimer extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            seconds: "0",
-            minutes: "0",
-            hours: "0",
+            seconds: this.props.seconds,
+            minutes: this.props.minutes,
+            hours: this.props.hours,
             millisecond: "0",
             comeSetTimer: false,
             notcomeSetTimer: false,
@@ -78,9 +78,12 @@ export default class EditTimer extends React.Component {
             const title = this.props.title;
             const text = this.props.text;
             const millisecond = this.state.millisecond;
+            const hours = this.state.hours;
+            const minutes = this.state.minutes;
+            const seconds = this.state.seconds;
             const comeSetTimer = !this.state.comeSetTimer ? 1 : 0;
             const id = this.state.id;
-            this.updatelist(title, text, millisecond, comeSetTimer,id);
+            this.updatelist(title, text, millisecond,hours,minutes,seconds, comeSetTimer,id);
             this.props.handleState()
             console.log(this.props.handleState)
 
@@ -99,7 +102,7 @@ export default class EditTimer extends React.Component {
     }
 
 
-    updatelist(title, text, millisecond, comeSetTimer,id) {
+    updatelist(title, text, millisecond,hours,minutes,seconds, comeSetTimer,id) {
         //is millisecond empty?
         if (millisecond === 0 || millisecond === '') {
             return false;
@@ -107,8 +110,8 @@ export default class EditTimer extends React.Component {
             DB.transaction(
                 tx => {
                     tx.executeSql(
-                        'update lists set title=?,content=?,millisecond=?,comeSetTimer=? where id=?',
-                        [title, text, millisecond, comeSetTimer,id]
+                        'update lists set title=?,content=?,millisecond=?,hours=?,minutes=?,seconds=?,comeSetTimer=? where id=?',
+                        [title, text, millisecond,hours,minutes,seconds, comeSetTimer,id]
                     );
                     tx.executeSql('select * from lists', [],
                         (_, { rows: { _array } }) => {

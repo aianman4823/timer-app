@@ -59,7 +59,15 @@ export default class EditTextInput extends Component {
                     />
 
                     <View style={{height:40}}>
-                        <EditTimer handleState={this.props.navigation.getParam('handleState')} id={this.state.id} text={this.state.text} title={this.state.title} navigation={this.props.navigation} />
+                        <EditTimer
+                        handleState={this.props.navigation.getParam('handleState')}
+                        hours={this.props.navigation.getParam('hours')} 
+                        minutes={this.props.navigation.getParam('minutes')} 
+                        seconds={this.props.navigation.getParam('seconds')} 
+                        id={this.state.id}
+                        text={this.state.text} 
+                        title={this.state.title} 
+                        navigation={this.props.navigation} />
                     </View>
                 </View>
             </Container>

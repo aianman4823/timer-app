@@ -38,8 +38,9 @@ export default class SettingTimerSecond extends React.Component {
 
     componentDidMount() {
         DB.transaction(tx => {
+            tx.executeSql('drop table lists;')
             tx.executeSql(
-                'create table if not exists lists (id integer primary key not null, title text,content text,millisecond integer, comeSetTimer integer,listUpdate integer);'
+                'create table if not exists lists (id integer primary key not null, title text,content text,millisecond integer,hours integer, minutes integer, seconds integer, comeSetTimer integer);'
             );
         })
     }
@@ -87,7 +88,11 @@ export default class SettingTimerSecond extends React.Component {
             const millisecond = this.state.millisecond;
             const comeSetTimer = !this.state.comeSetTimer ? 1 : 0;
 
-            this.add(title, text, millisecond, comeSetTimer);
+            const hours = this.state.hours;
+            const minutes = this.state.minutes;
+            const seconds = this.state.seconds;
+
+            this.add(title, text, millisecond,hours,minutes,seconds, comeSetTimer);
             this.props.handleState()
             console.log(this.props.handleState)
             console.log('listsだよ' + JSON.stringify(this.state.lists))
@@ -107,7 +112,7 @@ export default class SettingTimerSecond extends React.Component {
     }
 
 
-    add(title, text, millisecond, comeSetTimer) {
+    add(title, text, millisecond,hours,minutes,seconds, comeSetTimer) {
         //is millisecond empty?
         if (millisecond === 0 || millisecond === '') {
             return false;
@@ -115,8 +120,8 @@ export default class SettingTimerSecond extends React.Component {
             DB.transaction(
                 tx => {
                     tx.executeSql(
-                        'insert  into lists (title,content,millisecond,comeSetTimer) values (?,?,?,?)',
-                        [title, text, millisecond, comeSetTimer]
+                        'insert  into lists (title,content,millisecond,hours,minutes,seconds,comeSetTimer) values (?,?,?,?,?,?,?)',
+                        [title, text, millisecond,hours,minutes,seconds, comeSetTimer]
                     );
                     tx.executeSql('select * from lists', [],
                         (_, { rows: { _array } }) => {

@@ -167,10 +167,10 @@ export default class Main extends Component {
                                     <View>
                                         <Text style={{ position: 'absolute', left: width * 0.12, top: height * 0.07, fontSize: 22 }}>Minutes</Text>
                                         <Picker
-                                            selectedValue={this.state.seconds}
+                                            selectedValue={this.state.minutes}
                                             style={{ height: height * 0.05, width: width * 0.2, marginLeft: width * 0.13 }}
                                             onValueChange={(itemValue, itemIndex) =>
-                                                this.setState({ seconds: Number(itemValue) })
+                                                this.setState({ minutes: Number(itemValue) })
                                             }>
                                             <Picker.Item label='00' value={0} />
                                             <Picker.Item label='01' value={1} />

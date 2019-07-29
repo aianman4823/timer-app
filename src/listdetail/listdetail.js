@@ -53,6 +53,9 @@ export default class ListDetail extends React.Component{
                         title:navigation.getParam('title'),
                         text:navigation.getParam('text'),
                         millisecond:navigation.getParam('millisecond'),
+                        hours:navigation.getParam('hours'),
+                        minutes:navigation.getParam('minutes'),
+                        seconds:navigation.getParam('seconds'),
                         comeSetTimer:navigation.getParam('comeSetTimer'),
                         id:navigation.getParam('id'),
                         })}>

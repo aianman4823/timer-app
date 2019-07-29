@@ -52,7 +52,7 @@ export default class DynamicListExample extends Component {
         console.log('componentDidMount now!!')
         DB.transaction(tx => {
             tx.executeSql(
-                'create table if not exists lists (id integer primary key not null, title text,content text,millisecond integer, comeSetTimer integer);'
+                'create table if not exists lists (id integer primary key not null, title text,content text,millisecond integer,hours integer,minutes integer, seconds integer, comeSetTimer integer);'
             );
         })
         this.props.navigation.setParams({
@@ -148,7 +148,7 @@ export default class DynamicListExample extends Component {
                             title={item.title}
                             subtitle={item.content}
                             onPress={() => {
-                                this.props.navigation.navigate('ListDetail',{ refresh: this.componentDidMount.bind(this),title: item.title, text: item.content, millisecond: item.millisecond, comeSetTimer: item.comeSetTimer,id:item.id })
+                                this.props.navigation.navigate('ListDetail',{ refresh: this.componentDidMount.bind(this),title: item.title, text: item.content, millisecond: item.millisecond,hours:item.hours,minutes:item.minutes,seconds:item.seconds, comeSetTimer: item.comeSetTimer,id:item.id })
                             }}
                             onLongPress={() => {
                                 Alert.alert(
