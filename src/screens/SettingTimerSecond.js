@@ -38,7 +38,6 @@ export default class SettingTimerSecond extends React.Component {
 
     componentDidMount() {
         DB.transaction(tx => {
-            tx.executeSql('drop table lists;')
             tx.executeSql(
                 'create table if not exists lists (id integer primary key not null, title text,content text,millisecond integer,hours integer, minutes integer, seconds integer, comeSetTimer integer);'
             );

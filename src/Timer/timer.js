@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AppRegistry, StyleSheet, Text, View, TouchableHighlight, Alert,Dimensions } from 'react-native';
+import { AppRegistry, StyleSheet, Text, View, Vibration, Alert,Dimensions } from 'react-native';
 import { Stopwatch, Timer } from 'react-native-stopwatch-timer';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { withTheme } from 'react-native-elements';
@@ -79,7 +79,23 @@ export default class CountTimer extends Component {
     }
 }
 
-const handleTimerComplete = () => alert("設定時間が終わりました!お疲れ様です。");
+const handleTimerComplete = () => {
+    const PATTERN = [1000, 2000, 3000]
+    Vibration.vibrate(PATTERN,true)
+    Alert.alert(
+        '計測時間が終わりました',
+        'ブザーを止める',
+        [
+          {text: 'OK', onPress: () => {
+                console.log('OK Pressed')
+                Vibration.cancel()
+            }},
+        ],
+        {cancelable: false},
+      );
+    
+}
+
 
 const options = {
     container: {
