@@ -15,7 +15,7 @@
     "expo-sqlite": "^5.0.1",
     "expo-sqlite-orm": "^1.5.0",
     "install": "^0.13.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "mem": "^5.1.1",
     "native-base": "^2.12.1",
     "npm": "^6.10.0",
