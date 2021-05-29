@@ -35,7 +35,7 @@
     "react-navigation": "^3.11.0",
     "react-navigation-transitions": "^1.0.11",
     "realm": "^2.29.1",
-    "ws": "^7.1.1"
+    "ws": "^7.4.6"
   },
   "devDependencies": {
     "@expo/vector-icons": "^10.0.3",
